@@ -54,13 +54,13 @@
       <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/src/branch/master</item>
     </param.additional.sw.licenses>
     <param.additional.sw.win.url>
-      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications.git</item>
+      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/archive/master.zip</item>
     </param.additional.sw.win.url>
     <param.additional.sw.mac.url>
-      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications.git</item>
+      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/archive/master.zip</item>
     </param.additional.sw.mac.url>
     <param.additional.sw.linux.url>
-      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications.git</item>
+      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/archive/master.zip</item>
     </param.additional.sw.linux.url>
     <unset>
       <param.version />
@@ -85,10 +85,15 @@
     </fileset.rootdir>
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}\+SHAppE</file>
+      <file>${PROJECT_ROOT}\.git</file>
+      <file>${PROJECT_ROOT}\.gitattributes</file>
+      <file>${PROJECT_ROOT}\.gitignore</file>
       <file>${PROJECT_ROOT}\doc</file>
       <file>${PROJECT_ROOT}\Example_Windows.xlsx</file>
+      <file>${PROJECT_ROOT}\LICENSE</file>
       <file>${PROJECT_ROOT}\license.txt</file>
       <file>${PROJECT_ROOT}\README.md</file>
+      <file>${PROJECT_ROOT}\resources</file>
       <file>${PROJECT_ROOT}\SECURITY.md</file>
       <file>${PROJECT_ROOT}\SHAppE.mlappinstall</file>
       <file>${PROJECT_ROOT}\SHAppE_Logo.png</file>

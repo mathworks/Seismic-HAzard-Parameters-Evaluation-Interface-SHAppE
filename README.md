@@ -49,14 +49,12 @@ SHAPE functions are compatible with R2017b or later and require the following:
 ## Installation and Usage
 
 - **Get SHAppE**: You can download or clone SHAppE from GitHub&reg; or download/install from File Exchange.
-- **Download SHAPE Functions**: Users must also download or clone the original SHAPE toolbox from https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/src/branch/master/SHAPE_Package/SHAPE_ver2b.0/SSH to enable SHAppE's functionality.
+- **Download SHAPE Functions**: The original SHAPE toolbox will be installed automatically when you install SHAppE into MATLAB. It can also be downloaded from https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/src/branch/master/SHAPE_Package/SHAPE_ver2b.0/SSH to enable SHAppE's functionality.
 - **Installation**: Follow the provided instructions to add SHAppE to your MATLAB environment.
 - **Data Preparation**: Users may either download sample data or follow provided instructions to retrieve and preprocess data from the TCS-AH platform.
 - **Usage Guide**: SHAppE's interface is designed for interactive exploration and parameter evaluation with minimal setup.
 
 ## Examples
-
-Check the tutorial video: https://insidelabs-git.mathworks.com/aredfear/shape/-/blob/main/SHAppE_tutorial_video.mp4?ref_type=heads 
 
 For further information check the dynamic poster from the AGU&reg; 2024: https://agu24.ipostersessions.com/Default.aspx?s=70-48-54-74-A7-26-61-43-DA-37-35-81-88-E0-C0-57.
 
@@ -71,6 +69,10 @@ Leptokaropoulos, K. and Lasocki, S. (2020). SHAPE: A MATLAB software package for
 For inquiries and feedback please contact:
 
 Kostas Leptokaropoulos (kleptoka@mathworks.com)
+
+or
+
+Andrew Redfearn (aredfear@mathworks.com)
 
 Alternatively, connect via LinkedIn&reg;: https://www.linkedin.com/in/kostas-leptokaropoulos-391a0665/
 ```
