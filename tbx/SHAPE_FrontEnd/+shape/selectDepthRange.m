@@ -1,11 +1,4 @@
-% Visualisation to select depth range based on current instance of filtered
-% data
-
-% TODO:
-% - Change colour of points which are not in the selected region to gray
-% - Add annotations to plots
-% - Maybe introduce uislider("range") with spinners to fine tune ...
-% Or even better make the ylines on the right plot moveable.
+% selectDepthRange component class
 
 classdef selectDepthRange < shape.SHAPEComponent
 
@@ -39,7 +32,7 @@ classdef selectDepthRange < shape.SHAPEComponent
                 shapeData (1, 1) shape.ShapeData
                 namedArgs.?shape.selectDepthRange
             end
-            
+
             % Call superclass constructor
             obj@shape.SHAPEComponent(shapeData)
 
@@ -116,7 +109,7 @@ classdef selectDepthRange < shape.SHAPEComponent
                 depthBounds = obj.ShapeData.selectedDepthRange;
 
                 % set Spinners
-                obj.MinDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;                
+                obj.MinDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;
                 obj.MaxDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;
                 obj.MinDepthSpinner.Value = depthBounds(1);
                 obj.MaxDepthSpinner.Value = depthBounds(2);
@@ -188,7 +181,6 @@ classdef selectDepthRange < shape.SHAPEComponent
 
         end % onUndoButtonPushed
 
-        % TODO Should this be a protected method?
         function movingCurser(~, ~)
 
             xPos = num2ruler( ax.CurrentPoint(1, 1), ax.XAxis );
@@ -217,6 +209,3 @@ classdef selectDepthRange < shape.SHAPEComponent
     end % Methods callbacks
 
 end % classdef
-
-
-

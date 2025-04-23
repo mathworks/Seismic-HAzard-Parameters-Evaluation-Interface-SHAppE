@@ -1,5 +1,4 @@
-% TODO better to have a listener for the selected dates which updates
-% visualization and the datepicker
+% selectTime component class
 
 classdef selectTime < shape.SHAPEComponent
 

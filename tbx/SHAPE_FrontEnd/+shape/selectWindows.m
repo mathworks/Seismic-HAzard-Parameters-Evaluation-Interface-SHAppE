@@ -1,4 +1,4 @@
-% Description
+% selectWindows component class
 
 classdef selectWindows < shape.SHAPEComponent
 
@@ -69,7 +69,7 @@ classdef selectWindows < shape.SHAPEComponent
 
             % Setup method is called here by matlab.ui.componentcontainer.ComponentContainer
 
-            % Listeners            
+            % Listeners
             obj.ShapeDataWindowsChanged = ...
                 listener(obj.ShapeData, "WindowDates", "PostSet", @obj.onWindowsSet);
 
@@ -347,7 +347,7 @@ classdef selectWindows < shape.SHAPEComponent
         function onBrowseButtonPressed(obj, ~, ~)
 
             [file, path] = uigetfile("*.xlsx");
-            
+
             % Refocus figure
             focus(ancestor(obj, "figure"))
 
@@ -472,7 +472,6 @@ classdef selectWindows < shape.SHAPEComponent
 
         function setWindowsTime(obj)
 
-            % TODO Redo this function so it works like the events one below
             % Set windows size and step size as durations
             windowSize = days(obj.TimeWindowSize.Value);
             stepsize = days(obj.TimeStepSize.Value);
@@ -483,9 +482,6 @@ classdef selectWindows < shape.SHAPEComponent
             dt = mod(TotalDuration-windowSize, stepsize);
             numWindows = floor( ((TotalDuration - windowSize - dt) / stepsize) + 1 );
 
-            % TODO (?) We want some rules based on the value of dt.
-            % If it's very small we can merge or throw away.
-            % If it's almost the same size as a window, create a final smaller window
             % Create windows in terms of dates
             windowStartDates = ...
                 (timestamps(1) : stepsize : timestamps(1)+(stepsize*numWindows-1))';
@@ -595,9 +591,3 @@ classdef selectWindows < shape.SHAPEComponent
     end % methods
 
 end % classdef
-
-
-
-
-
-

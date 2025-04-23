@@ -1,7 +1,4 @@
-% TODO Button callbacks
-% TODO add uilabel to the spinner (minimum magnitude)
-% TODO drop down for magnitude measurement choice
-% TODO Is there a listener for when the SHAPE data changes
+% selectMagnitude component class
 
 classdef selectMagnitude < shape.SHAPEComponent
 
@@ -57,7 +54,7 @@ classdef selectMagnitude < shape.SHAPEComponent
             grid(obj.Axes, "on")
             obj.Axes.Toolbar.Visible = "off";
             disableDefaultInteractivity(obj.Axes) % Stops panning
-            
+
             % Control panel and grid
             ControlPanel = uipanel(obj.MainGrid);
             ControlGrid = uigridlayout(ControlPanel, [5, 2], ...
@@ -83,8 +80,8 @@ classdef selectMagnitude < shape.SHAPEComponent
             obj.RestoreButton.Layout.Column = 1:2;
 
             % Histogram
-            obj.Histogram = histogram(obj.Axes, NaN);    
-            
+            obj.Histogram = histogram(obj.Axes, NaN);
+
             % Xline
             obj.Xline = xline(obj.Axes, NaN, ...
                 "Color", "Red", ...
@@ -107,7 +104,7 @@ classdef selectMagnitude < shape.SHAPEComponent
                 obj.Histogram.Data = magnitudeData;
 
                 if ~isempty(magnitudeData)
-                    % TODO Can we do better than this? So it is a bit more general, binwidth spinner?
+                    % Set up histogram edges
                     obj.Histogram.BinEdges = min(magnitudeData)-0.05:0.1:max(magnitudeData)+0.05;
 
                     % Set up spinner and xline
@@ -125,7 +122,7 @@ classdef selectMagnitude < shape.SHAPEComponent
                 % If no seismic data exists, disable controls
                 set([obj.ApplyButton, obj.RestoreButton, obj.MagLimitSpinner],...
                     "Enable", "off")
-                
+
             end
 
         end
@@ -156,7 +153,7 @@ classdef selectMagnitude < shape.SHAPEComponent
             magMin = obj.MagLimitSpinner.Value;
 
             % Set filter values
-            obj.ShapeData.Filter("selectedMagnitudeMinimum", magMin)            
+            obj.ShapeData.Filter("selectedMagnitudeMinimum", magMin)
 
         end % onApplyButtonPushed
 

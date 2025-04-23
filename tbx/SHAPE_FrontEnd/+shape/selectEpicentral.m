@@ -1,5 +1,4 @@
-% TODO Add apply and undo buttons
-% TODO addd basemap drop down
+% selectEpicentral component class
 
 classdef selectEpicentral < shape.SHAPEComponent
 
@@ -14,7 +13,7 @@ classdef selectEpicentral < shape.SHAPEComponent
     end
 
     properties
-        Basemap = "topographic" % TODO validate that this is part of the list of valid basemaps
+        Basemap = "topographic"
     end
 
     properties (Constant, Access=private)
@@ -34,7 +33,7 @@ classdef selectEpicentral < shape.SHAPEComponent
                 shapeData (1, 1) shape.ShapeData
                 namedArgs.?shape.selectEpicentral
             end
-            
+
             % Call superclass constructor
             obj@shape.SHAPEComponent(shapeData)
 
@@ -51,7 +50,7 @@ classdef selectEpicentral < shape.SHAPEComponent
     end % Constructor
 
     methods (Access = protected)
-        
+
         function setup(obj)
 
             % Create graphics
@@ -173,7 +172,7 @@ classdef selectEpicentral < shape.SHAPEComponent
 
                 % Grab axis limits before setting
                 latLims = obj.GeoAxes.LatitudeLimits;
-                lonLims = obj.GeoAxes.LongitudeLimits;                
+                lonLims = obj.GeoAxes.LongitudeLimits;
 
                 % Set property using filter methodserial
                 obj.ShapeData.Filter("selectedEpicentralValues", obj.ROI.Position)
@@ -213,7 +212,7 @@ classdef selectEpicentral < shape.SHAPEComponent
     methods (Access=private)
 
         function InitilaizeROI(obj)
-            
+
             % Delete ROI is one exists
             if ~isempty(obj.ROI)
                 delete(obj.ROI)
@@ -234,4 +233,3 @@ classdef selectEpicentral < shape.SHAPEComponent
     end
 
 end % classdef
-

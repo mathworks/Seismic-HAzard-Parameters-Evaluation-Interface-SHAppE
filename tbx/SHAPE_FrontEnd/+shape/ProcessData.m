@@ -1,14 +1,4 @@
-% TODO: when user select maximum magnitude value, this must be greater or
-% equal to the overall maximum magnitude which is a dependant property of
-% the shapeData class. There should be a message to explain this also.
-% There should also be info on providing [] for maximum magnitude, which is
-% how you request an estimated value for truncated methods.
-
-% Changing the data filters will reset the values in this tab fyi
-
-% Prevent runAnalysis if windows aren't set
-
-% Is it running setup twice?
+% ProcessData component class
 
 classdef ProcessData < shape.SHAPEComponent
 
@@ -62,12 +52,7 @@ classdef ProcessData < shape.SHAPEComponent
 
         function setup(obj)
 
-            % TODO Initialize all graphics
-
-            % Typically the first line here looks like this:
-            % we assign our 'base' graphical components (often a grid) to
-            % the object itself. Think of this as assigning it to the
-            % super class which is effectively a uipanel.
+            % Main grid
             obj.MainGrid = uigridlayout(obj, [2, 2], ...
                 "ColumnWidth", {300, "1x"}, ...
                 "RowHeight", {"fit", "fit"});

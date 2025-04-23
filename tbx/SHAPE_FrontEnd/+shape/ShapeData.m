@@ -1,10 +1,4 @@
-% TODO:
-
-% - selectedMagnitudeMinimum should be dependent and take the lowest depth
-% value based on the selected magnitude measurement. Currently it only does
-% this in the constructor.
-% - Checks on production data file names, seems a bit awkward as i also
-% want to allow not providing them
+% ShapeData Model class file
 
 classdef ShapeData < handle
 
@@ -15,8 +9,6 @@ classdef ShapeData < handle
     end
 
     properties ( SetObservable )
-        % TODO For now selectedDateRange is initially set as the seismic
-        % data date range
         selectedDateRange (1, 2) datetime = [NaT, NaT]          % lower and upper time range
         selectedEpicentralValues (:, 2) {mustBeNumeric, mustBeFinite, mustBePositive} % latitude and longitude values for each point of the epicentral ROI
         selectedDepthRange (1, 2) {mustBeNumeric} = [NaN, NaN]  % lower and upper depth limits
@@ -59,7 +51,7 @@ classdef ShapeData < handle
         TargetMagnitude (1, 1) {mustBeNumeric}
 
         NumBootStapItr (1, 1) {mustBeNumeric} = 100
-        
+
     end
 
     % Result properties
@@ -193,7 +185,6 @@ classdef ShapeData < handle
 
         function Filter(obj, name, value)
 
-            % TODO checks on name, should be a valid filter property name
             obj.(name) = value;
             notify(obj, "FilterChanged")
 
@@ -201,7 +192,6 @@ classdef ShapeData < handle
 
         function setDefaultFilter(obj, name)
 
-            % TODO is there a better way to do this?
             switch name
 
                 case "selectedDateRange"
@@ -510,7 +500,7 @@ classdef ShapeData < handle
             obj.ResultsTable.TimeRange = obj.WindowDates;
             obj.ResultsTable.TimeMid = obj.ResultsTable.TimeRange(:, 1) + diff(obj.ResultsTable.TimeRange, [], 2)/2;
             obj.ResultsTable.NumEvents = numWdwEvents;
-            obj.ResultsTable.EventsPerDay = obj.ResultsTable.NumEvents ./ days( diff(obj.ResultsTable.TimeRange, [], 2) ); % TODO This might need to be events per 'chosen time unit'
+            obj.ResultsTable.EventsPerDay = obj.ResultsTable.NumEvents ./ days( diff(obj.ResultsTable.TimeRange, [], 2) );
             obj.ResultsTable.DistTables = DistTables;
             obj.ResultsTable.B_values = B_values;
             obj.ResultsTable.B_values_CI = B_values_CI;
@@ -688,7 +678,7 @@ classdef ShapeData < handle
 
             FilterNames = ["Magnitude Measurement", "Minimum Magnitude", "Epicentral", ...
                 "Min Depth", "Max Depth", ...
-                "Start Time", "End Time"]';            
+                "Start Time", "End Time"]';
 
             FilterValues = {obj.selectedMagnitudeMeasurement, ...
                 obj.selectedMagnitudeMinimum, obj.selectedEpicentralValues, ...
@@ -789,20 +779,13 @@ classdef ShapeData < handle
             % Ensure dates are sequential
             value = sort(value);
 
-            % TODO Clip dates to min and max of the dataset - i've parked
-            % this due to the warning (uncomment to see), not sure what the
-            % best appriach is here.
-            % [minSDate, maxSDate] = bounds(obj.SeismicData.Time);
-            % value(1) = max(value(1), minSDate);
-            % value(2) = min(value(2), maxSDate);
-
             % Set property
             obj.selectedDateRange = value;
 
         end
 
         function set.selectedEpicentralValues(obj, value)
-            
+
             % Check we have at least three epicentral points or it is empty
             numPoints = height(value);
             if numPoints >= 3
@@ -812,7 +795,7 @@ classdef ShapeData < handle
             else
                 error("selectedEpicentralValues must be empty or height >=3")
             end
-            
+
         end
 
     end % set methods

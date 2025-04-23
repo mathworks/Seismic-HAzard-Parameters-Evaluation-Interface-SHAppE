@@ -1,9 +1,11 @@
+% ImportSHAPE component class
+
 classdef ImportSHAPE < shape.SHAPEComponent
 
     properties (Access = private)
         MainGrid matlab.ui.container.GridLayout
         ControlsPanel matlab.ui.container.Panel
-        ControlsGrid matlab.ui.container.GridLayout        
+        ControlsGrid matlab.ui.container.GridLayout
 
         FileNameDisplays (1, 4) matlab.ui.control.EditField
         BrowseButtons (1, 4) matlab.ui.control.Button
@@ -11,7 +13,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
         ClearButton (1, 1) matlab.ui.control.Button
     end
 
-    % TODO make this a private prop - (for testing leave public)
     properties
         FileNames (2, 1) string
     end
@@ -30,8 +31,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
             % Setup method is called here
 
-            % TODO Set up data
-
             % Set n-v pairs
             set(obj, namedArgs)
 
@@ -43,12 +42,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function setup(obj)
 
-            % TODO Initialise all graphics
-
-            % Typically the first line here looks like this:
-            % we assign our 'base' graphical components (often a grid) to
-            % the object itself. Think of this as assigning it to the
-            % superclass which is effectivly a uipanel.
+            % Main grid
             obj.MainGrid = uigridlayout(obj, [3, 1], ...
                 "RowHeight", {"fit", "fit", "1x"});
 
@@ -118,7 +112,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
             % If a file is selected
             if file ~= 0
-    
+
                 % Write file name property based on button pressed
                 idx = source.UserData;
                 obj.FileNames(idx) = fullfile(path, file);
@@ -140,7 +134,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 try
                     obj.ShapeData.importSeismicData(obj.FileNames(1));
                     obj.ShapeData.importProductionData(obj.FileNames(2));
-                    
+
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...
                         "Successful Import", ...
@@ -173,17 +167,17 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
                 % Ask for seismic file name if only production file given
                 uialert(ancestor(obj, "matlab.ui.Figure"), ...
-                        "Please specify the file name for the Seismic data", ...
-                        "Seismic Data File Name Required")
+                    "Please specify the file name for the Seismic data", ...
+                    "Seismic Data File Name Required")
 
             elseif ~all( fileNamesExist )
 
                 % If no file names are given
                 uialert(ancestor(obj, "matlab.ui.Figure"), ...
-                        "Please specify the seismic data or both file names", ...
-                        "File Names Required")
+                    "Please specify the seismic data or both file names", ...
+                    "File Names Required")
 
-            end % if all( fileNamesExist )            
+            end % if all( fileNamesExist )
 
         end % onImportButtonPressed
 

@@ -10,10 +10,10 @@ classdef ViewResults < shape.SHAPEComponent
         Axis1 matlab.graphics.axis.Axes
         Axis2 matlab.graphics.axis.Axes
         Axis3 matlab.graphics.axis.Axes
-        ScaleDropDown        
+        ScaleDropDown
     end
 
-    properties (Constant)        
+    properties (Constant)
         LeftColour = "k";
         RightColour = [0.8510, 0.3255, 0.0980]; % Orange
     end
@@ -36,8 +36,6 @@ classdef ViewResults < shape.SHAPEComponent
             obj@shape.SHAPEComponent(shapeData)
 
             % Setup method is called here
-
-            % TODO Set up data
 
             % Set n-v pairs
             set(obj, namedArgs)
@@ -78,21 +76,21 @@ classdef ViewResults < shape.SHAPEComponent
             obj.DisplayTable = uitable(g);
 
             % Save and export buttons
-            buttonGrid = uigridlayout(obj.MainGrid, [1, 5], "ColumnWidth", repmat("fit", 1, 5));            
+            buttonGrid = uigridlayout(obj.MainGrid, [1, 5], "ColumnWidth", repmat("fit", 1, 5));
             uibutton(buttonGrid, "Text", "Save as .mat", ...
                 "Enable", "off", "Visible", "off");
             uibutton(buttonGrid, "Text", "Export to Excel", ...
                 "ButtonPushedFcn", @obj.ExportResultsTable);
-            
-            % TODO Find a better place for this dropdown menu
+
+            % Linear / Log dropdown menu
             obj.ScaleDropDown = uidropdown(buttonGrid, ...
                 "Items", ["linear", "log"], ...
                 "ValueChangedFcn", @obj.ChangeAxisScale);
 
         end % setup
 
-        function update(obj, ~, ~)  
-            
+        function update(obj, ~, ~)
+
         end % update
 
     end % method setup update
@@ -213,7 +211,7 @@ classdef ViewResults < shape.SHAPEComponent
 
             % Set up tiled layout and annotations
             obj.ChartSetup()
-            
+
             % Save number of windows for for loops
             numWindows = obj.ShapeData.NumWindows;
 
@@ -282,7 +280,7 @@ classdef ViewResults < shape.SHAPEComponent
                 y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
                 plot(obj.Axis3, x, y, "color", obj.LeftColour, "LineStyle", "-", "Marker","none")
             end
-            
+
             yyaxis(obj.Axis3, "right")
             % If B values exist add to the plot
             if any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all")
@@ -319,7 +317,7 @@ classdef ViewResults < shape.SHAPEComponent
 
         function ChartSetup(obj)
 
-            % TODO Maybe some of this could move to setup?
+            % Tiledlayout
             obj.TiledLayout = tiledlayout(obj.ChartTab, 3, 1);
 
             % Tile 1
@@ -363,7 +361,7 @@ classdef ViewResults < shape.SHAPEComponent
             ylabel(obj.Axis3, "Events/day")
 
             yyaxis(obj.Axis3, "right")
-            obj.Axis3.YAxis(2).Color = obj.RightColour;            
+            obj.Axis3.YAxis(2).Color = obj.RightColour;
             ylabel(obj.Axis3, "b-value")
 
             % Global setting for all axes
@@ -398,10 +396,10 @@ classdef ViewResults < shape.SHAPEComponent
                 % Export everything
                 obj.ShapeData.ExportData()
 
-            end            
+            end
 
         end
-    
+
     end % methods
 
 end % classdef
