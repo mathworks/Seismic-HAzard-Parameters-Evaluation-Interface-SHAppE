@@ -48,10 +48,10 @@
     <param.compatiblity.matlabonline>false</param.compatiblity.matlabonline>
     <param.installation.map>+SHAppE\getInstallationLocation.mlx</param.installation.map>
     <param.additional.sw.names>
-      <item>sera-applications</item>
+      <item>SHAPE toolbox</item>
     </param.additional.sw.names>
     <param.additional.sw.licenses>
-      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/src/branch/master</item>
+      <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/src/branch/master/SHAPE_Package/SHAPE_ver2b.0/SSH/dist_GRT.m</item>
     </param.additional.sw.licenses>
     <param.additional.sw.win.url>
       <item>https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/archive/master.zip</item>
