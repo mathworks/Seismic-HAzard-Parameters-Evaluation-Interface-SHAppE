@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2997417748" file="C:\Users\aredfear\OneDrive - MathWorks\Work\CSE\Projects\SHAppE\SHAppE.prj" location="C:\Users\aredfear\OneDrive - MathWorks\Work\CSE\Projects\SHAppE" name="SHAppE" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="1885436003" file="C:\Users\aredfear\OneDrive - MathWorks\Work\CSE\Projects\SHAppE\SHAppE.prj" location="C:\Users\aredfear\OneDrive - MathWorks\Work\CSE\Projects\SHAppE" name="SHAppE" target="target.mlapps" target-name="Package App">
     <param.appname>SHAppE</param.appname>
     <param.authnamewatermark>Andrew Redfearn</param.authnamewatermark>
     <param.email>aredfear@mathworks.com</param.email>
@@ -35,20 +35,20 @@
       <param.output />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\launcher.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\SHAppE_launcher.m</file>
     </fileset.main>
     <fileset.depfun>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\ImportSHAPE.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\ProcessData.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\selectDepthRange.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\selectEpicentral.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\selectMagnitude.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\selectTime.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\selectWindows.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\SHAPEApp.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\SHAPEComponent.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\ShapeData.m</file>
-      <file>${PROJECT_ROOT}\tbx\SHAPE_FrontEnd\+shape\ViewResults.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\ImportSHAPE.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\ProcessData.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\selectDepthRange.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\selectEpicentral.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\selectMagnitude.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\selectTime.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\selectWindows.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\SHAPEApp.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\SHAPEComponent.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\ShapeData.m</file>
+      <file>${PROJECT_ROOT}\tbx\SHAppE_FrontEnd\+shape\ViewResults.m</file>
     </fileset.depfun>
     <fileset.resources />
     <fileset.package />

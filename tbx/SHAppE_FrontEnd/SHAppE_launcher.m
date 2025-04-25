@@ -1,12 +1,21 @@
-function launcher
+function SHAppE_launcher
 
-% Check third party SHAPE Functions are on the path
-% https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications.git
-checkSHAPEFunctions
+% Check for IP and Stats toolboxes
+if checkToolboxes
 
-% Create instance of model and launch app
-shapeData = shape.ShapeData;
-shape.SHAPEApp(shapeData);
+    % Check third party SHAPE Functions are on the path
+    % https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications.git
+    checkSHAPEFunctions
+
+    % Create instance of model and launch app
+    shapeData = shape.ShapeData;
+    shape.SHAPEApp(shapeData);
+
+else
+
+    warning("SHAppE cannot launch. Required MATLAB toolboxes (Image Processing Toolbox, Statistics and Machine Learning Toolbox) are not installed.")
+
+end
 
 end
 
@@ -49,8 +58,15 @@ else
         % Re-add only the required folder
         addpath(functionsToUse)
 
-    end
+    end % if isscalar(idx) && idx
 
-end
+end % if isempty(locations) || ~any(idx)
 
-end
+end % checkSHAPEFunctions
+
+function  isInstalled = checkToolboxes
+
+isInstalled = license("test", "Image_Toolbox") && ...
+    license("test", "statistics_Toolbox");
+
+end % checkToolboxes

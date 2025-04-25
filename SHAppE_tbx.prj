@@ -96,6 +96,7 @@
       <file>${PROJECT_ROOT}\resources</file>
       <file>${PROJECT_ROOT}\SECURITY.md</file>
       <file>${PROJECT_ROOT}\SHAppE.mlappinstall</file>
+      <file>${PROJECT_ROOT}\SHAppE__resources</file>
       <file>${PROJECT_ROOT}\SHAppE_Logo.png</file>
       <file>${PROJECT_ROOT}\SHAppE_resources</file>
       <file>${PROJECT_ROOT}\SHAppE_ScreenShot.png</file>
