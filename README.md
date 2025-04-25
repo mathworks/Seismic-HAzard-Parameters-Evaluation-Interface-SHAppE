@@ -1,3 +1,6 @@
+[![Open in MATLAB Online](https://www.mathworks.com/images/responsive/global/open-in-matlab-online.svg)](https://matlab.mathworks.com/open/github/v1?repo=mathworks/Seismic-HAzard-Parameters-Evaluation-Interface-SHAppE)
+[![View Seismic-HAzard-Parameters-Evaluation-Interface-SHAppE on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/180879-shappe-seismic-hazard-parameters-evaluation-interface)
+
 # SHAppE: Seismic HAzard Parameters Evaluation App
 
 SHAppE is an intuitive interface for time-dependent seismic hazard evaluation, designed to support both researchers and practitioners in natural and anthropogenic seismology.
@@ -44,7 +47,7 @@ SHAPE functions are compatible with R2017b or later and require the following:
 ## 3rd Party Content
 
 - **Original MATLAB Functions for Hazard Analysis**: SHAppE relies on the original MATLAB functions for seismic hazard parameter evaluations available in the SHAPE toolbox repository: https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/src/branch/master/SHAPE_Package/SHAPE_ver2b.0/SSH.
-- **Sample data can be downloaded from Thematic Core Service - Anthropogenic Hazards (TCS-AH)** on the Episodes Platform: https://episodesplatform.eu/?lang=en#episode:SONG_TRANH. The dataset includes seismicity records and water level measurements from the Song Tranh 2 reservoir in Vietnam. These data are shared under the Creative Commons Attribution 4.0 International License (CC:BY). We processed the original data in the Sample_Data directory to be compatible with the app.
+- **Sample data can be downloaded from Thematic Core Service - Anthropogenic Hazards (TCS-AH)** on the Episodes Platform: https://episodesplatform.eu/?lang=en#episode:SONG_TRANH. The dataset includes seismicity records and water level measurements from the Song Tranh 2 reservoir in Vietnam. These data are shared under the Creative Commons Attribution 4.0 International License (CC:BY). We processed the original data in the Sample_Data directory to be compatible with the app. We duplicated the ML as MW in seismic data and Water Level as Pressure in production data for demonstration purposes.
 
 ## Installation and Usage
 
