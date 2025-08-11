@@ -1,4 +1,5 @@
 % ImportSHAPE component class
+% Branch test
 
 classdef ImportSHAPE < shape.SHAPEComponent
 
