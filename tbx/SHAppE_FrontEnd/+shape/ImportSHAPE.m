@@ -1,5 +1,4 @@
 % ImportSHAPE component class
-% Branch test
 
 classdef ImportSHAPE < shape.SHAPEComponent
 
@@ -12,6 +11,8 @@ classdef ImportSHAPE < shape.SHAPEComponent
         BrowseButtons (1, 4) matlab.ui.control.Button
         ImportButton (1, 1) matlab.ui.control.Button
         ClearButton (1, 1) matlab.ui.control.Button
+
+        ImportedDisplayTable matlab.ui.control.Table
     end
 
     properties
@@ -44,14 +45,15 @@ classdef ImportSHAPE < shape.SHAPEComponent
         function setup(obj)
 
             % Main grid
-            obj.MainGrid = uigridlayout(obj, [3, 1], ...
-                "RowHeight", {"fit", "fit", "1x"});
+            obj.MainGrid = uigridlayout(obj, [2, 2], ...
+                "RowHeight", {"fit", "fit", "1x"}, ...
+                "ColumnWidth", {"fit", "1x"});
 
-            % Description
-            uilabel(obj.MainGrid, "Text", "Select files to import");
-
-            obj.ControlsPanel = uipanel(obj.MainGrid);
-            obj.ControlsPanel.Layout.Row = 2;
+            % Import files panel
+            obj.ControlsPanel = uipanel(obj.MainGrid, ...
+                "Title", "Select files to import");
+            obj.ControlsPanel.Layout.Row = 1;
+            obj.ControlsPanel.Layout.Column = 1;
 
             obj.ControlsGrid = uigridlayout(obj.ControlsPanel, [7, 3], ...
                 "RowHeight", {"fit", "fit", "fit", "fit", "fit", "fit", "1x"}, ...
@@ -92,11 +94,59 @@ classdef ImportSHAPE < shape.SHAPEComponent
             obj.ClearButton.Layout.Row = 3;
             obj.ClearButton.Layout.Column = 3;
 
+            % Getting started panel
+            startPanel = uipanel(obj.MainGrid, ...
+                "Title", "Getting Started");
+            startPanel.Layout.Row = 2;
+            startPanel.Layout.Column = 1;
+
+            % Getting started grid
+            startGrid = uigridlayout(startPanel, [1, 2], ...
+                "RowHeight", {"fit", "fit"}, ...
+                "ColumnWidth", {"fit", "fit"});
+
+            % Getting started buttons
+            uibutton(startGrid, "text", "Open Documentation");
+            uibutton(startGrid, "text", "Move Examples files to PWD");
+
+            % Imported data panel
+            importedPanel = uipanel(obj.MainGrid, ...
+                "Title", "Imported Data");
+            importedPanel.Layout.Row = [1, 2];
+            importedPanel.Layout.Column = 2;
+
+            % Imported data grid
+            importedGrid = uigridlayout(importedPanel, [2, 1]);
+
+            % Imported selector panel
+            RqrdVarNames = ["Time", "Longitude", "Latitude", "Magnitude", "Depth"];
+            numRqrdVars = length(RqrdVarNames);
+            selectorPanel = uipanel(importedGrid);
+            selectorGrid = uigridlayout(selectorPanel, [numRqrdVars+1, 2], ...
+                "ColumnWidth", ["fit", "fit"]);
+            
+            for k = 1:numRqrdVars
+                uilabel(selectorGrid, "Text", RqrdVarNames(k));
+                uidropdown(selectorGrid);
+            end
+            selectorGrid.RowHeight = repmat("fit", 1, numRqrdVars+1);
+
+            % Imported data display table
+            obj.ImportedDisplayTable = uitable(importedGrid);
+
+            % make everything in imported panel invisible
+            set(importedPanel.Children, "Visible", "off")
+
         end
 
         function update(obj, ~, ~)
 
             % This method is run whenever a public property is changed
+
+            if ~isempty(obj.ShapeData.SeismicData)
+                obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.SeismicData );
+            end
 
         end
 

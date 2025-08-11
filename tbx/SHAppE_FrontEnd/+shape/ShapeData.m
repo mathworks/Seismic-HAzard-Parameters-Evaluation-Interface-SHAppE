@@ -5,15 +5,15 @@ classdef ShapeData < handle
     properties (SetAccess = private)
         SeismicDataFileName (1, 1) string
         ProductionDataFileName (1, 1) string
-        SeismicData = table(double.empty( 0, 1 ), double.empty( 0, 1 ), 'VariableNames', ["Lat", "Long"])
+        SeismicData = table(double.empty( 0, 1 ), double.empty( 0, 1 ), 'VariableNames', ["Latitude", "Longitude"])
     end
 
     properties ( SetObservable )
         selectedDateRange (1, 2) datetime = [NaT, NaT]          % lower and upper time range
         selectedEpicentralValues (:, 2) {mustBeNumeric, mustBeFinite, mustBePositive} % latitude and longitude values for each point of the epicentral ROI
         selectedDepthRange (1, 2) {mustBeNumeric} = [NaN, NaN]  % lower and upper depth limits
-        selectedMagnitudeMeasurement (1, 1) string ...          % Selected magnitude measurement
-            = shape.ShapeData.ValidMagnitudeMeasurements(1)
+        % selectedMagnitudeMeasurement (1, 1) string ...          % Selected magnitude measurement
+        %     = shape.ShapeData.ValidMagnitudeMeasurements(1)
         selectedMagnitudeMinimum (1, 1) {mustBeNumeric} = NaN   % Magnitude lower limit
         WindowDates (:, 2) datetime = datetime.empty( 0, 2 )
         WindowMethodInfo struct
@@ -33,7 +33,7 @@ classdef ShapeData < handle
     end % properties ( Dependent, SetAccess = private )
 
     properties ( Constant )
-        ValidMagnitudeMeasurements = ["ML", "Mw"]
+        % ValidMagnitudeMeasurements = ["ML", "Mw"]
     end % properties ( Constant )
 
     % Processing properties
@@ -71,34 +71,34 @@ classdef ShapeData < handle
 
     methods % Constructor
 
-        function obj = ShapeData(seismicDataFileName, productionDataFileName)
+        function obj = ShapeData(seismicDataFileName, requiredSvarsIdx, productionDataFileName, requiredPvarsIdx)
 
             switch nargin
 
                 % Two inputs provided
-                case 2
+                case 4
 
                     % Validation
                     validateattributes(seismicDataFileName, "string", {"size", [1, 1]})
                     validateattributes(productionDataFileName, "string", {"size", [1, 1]})
 
                     % Import seismic data
-                    obj.importSeismicData(seismicDataFileName)
+                    obj.importSeismicData(seismicDataFileName, requiredSvarsIdx)
 
                     % Import production data
-                    obj.importProductionData(productionDataFileName)
+                    obj.importProductionData(productionDataFileName, requiredPvarsIdx)
 
                     % One input provided
-                case 1
+                case 2
 
                     % Validation
                     validateattributes(seismicDataFileName, "string", {"size", [1, 1]})
 
                     % Import seismic data
-                    obj.importSeismicData(seismicDataFileName)
+                    obj.importSeismicData(seismicDataFileName, requiredSvarsIdx)
 
-                    % No inputs required
-                case 0
+                    % No or not enough inputs required
+                otherwise
 
             end % switch nargin
 
@@ -108,15 +108,20 @@ classdef ShapeData < handle
 
     methods % Public methods
 
-        function importSeismicData(obj, seismicDataFileName)
+        function importSeismicData(obj, seismicDataFileName, requiredVarsColumn)
+
+            % requiredVarsColumn is provided by the user and is the column number
+            % for each of the required variables below in the supplied file
+            % ["Time", "Latitude", "Longitude", "Magnitude", "Depth"];
 
             arguments
                 obj (1, 1) shape.ShapeData
                 seismicDataFileName (1, 1) string {mustBeFile}
+                requiredVarsColumn (1, 5) {mustBeNumeric, mustBePositive, mustBeInteger, mustBeFinite, mustBeNonzero}
             end
 
             % Import data
-            obj.SeismicData = obj.importData(seismicDataFileName);
+            obj.SeismicData = obj.importSeismicDataFile(seismicDataFileName, requiredVarsColumn);
 
             % Set date range
             [minSDate, MaxSDate] = bounds(obj.SeismicData.Time);
@@ -131,7 +136,7 @@ classdef ShapeData < handle
 
             % Set magnitude minimum
             obj.selectedMagnitudeMinimum = ...
-                min(obj.SeismicData.(obj.selectedMagnitudeMeasurement));
+                min(obj.SeismicData.Magnitude);
 
             % Set Max magnitude default for processing
             obj.M_Max = obj.MaxMagnitudeSeismicData;
@@ -146,18 +151,23 @@ classdef ShapeData < handle
 
         end
 
-        function importProductionData(obj, productionDataFileName)
+        function importProductionData(obj, productionDataFileName, requiredVarsColumn)
+
+            % requiredVarsColumn is provided by the user and is the column number
+            % for each of the required variables below in the supplied file
+            % ["Time"];
 
             arguments
                 obj (1, 1) shape.ShapeData
                 productionDataFileName (1, 1) string {mustBeFile}
+                requiredVarsColumn (1, 1) {mustBeNumeric, mustBePositive, mustBeInteger, mustBeFinite, mustBeNonzero}
             end
 
             % Ensure seismicData exists before importing production data
             if ~isempty(obj.SeismicData)
 
                 % Import production data
-                ProductionData = obj.importData(productionDataFileName);
+                ProductionData = obj.importProductionDataFile(productionDataFileName, requiredVarsColumn);
 
                 % Merge both datasets
 
@@ -221,17 +231,17 @@ classdef ShapeData < handle
 
                     % Set magnitude minimum
                     obj.selectedMagnitudeMinimum = ...
-                        min(obj.SeismicData.(obj.selectedMagnitudeMeasurement));
+                        min(obj.SeismicData.Magnitude);
 
                     notify(obj, "FilterChanged")
 
-                case "selectedMagnitudeMeasurement"
-
-                    % Set magnitude minimum
-                    obj.selectedMagnitudeMeasurement = ...
-                        obj.ValidMagnitudeMeasurements(1);
-
-                    notify(obj, "FilterChanged")
+                % case "selectedMagnitudeMeasurement"
+                % 
+                %     % Set magnitude minimum
+                %     obj.selectedMagnitudeMeasurement = ...
+                %         obj.ValidMagnitudeMeasurements(1);
+                % 
+                %     notify(obj, "FilterChanged")
 
             end % switch
 
@@ -246,7 +256,7 @@ classdef ShapeData < handle
 
             % Epicentral: Create logical for selected long and lat
             if ~isempty(obj.selectedEpicentralValues)
-                inROI = inpolygon(obj.SeismicData.Long, obj.SeismicData.Lat, ...
+                inROI = inpolygon(obj.SeismicData.Longitude, obj.SeismicData.Latitude, ...
                     obj.selectedEpicentralValues(:, 2), obj.selectedEpicentralValues(:, 1));
                 idx = idx & inROI;
             end
@@ -258,7 +268,7 @@ classdef ShapeData < handle
 
             % Magnitude: Create logical for selected
             idx = idx ...
-                & obj.SeismicData.(obj.selectedMagnitudeMeasurement) ...
+                & obj.SeismicData.Magnitude ...
                 >= obj.selectedMagnitudeMinimum;
 
         end % function idx = createFilterLogical(obj)
@@ -303,11 +313,11 @@ classdef ShapeData < handle
 
                     % Filter the seismic data based on set minimum
                     % magnitude value
-                    idx = obj.SeismicData.(obj.selectedMagnitudeMeasurement) >= ...
+                    idx = obj.SeismicData.Magnitude >= ...
                         obj.selectedMagnitudeMinimum;
                     seismicFiltered = obj.SeismicData(idx, :);
                     Ctime = datenum(seismicFiltered.Time);
-                    Cmag = seismicFiltered.(obj.selectedMagnitudeMeasurement);
+                    Cmag = seismicFiltered.Magnitude;
 
                     switch obj.Method
                         case "GR"
@@ -350,7 +360,7 @@ classdef ShapeData < handle
 
                                 % Setup
                                 t = datenum(wdwData.Time);
-                                M = wdwData.(obj.selectedMagnitudeMeasurement);
+                                M = wdwData.Magnitude;
                                 iop = double( replace(obj.SelectedTimeUnit, ["Day", "Month", "Year"], ["0", "1", "2"]) );
                                 Mmin = obj.selectedMagnitudeMinimum;
 
@@ -395,7 +405,7 @@ classdef ShapeData < handle
 
                                 % Setup
                                 t = datenum(wdwData.Time);
-                                M = wdwData.(obj.selectedMagnitudeMeasurement);
+                                M = wdwData.Magnitude;
                                 iop = double( replace(obj.SelectedTimeUnit, ["Day", "Month", "Year"], ["0", "1", "2"]) );
                                 Mmin = obj.selectedMagnitudeMinimum;
                                 [~,lamb, ~, ~, eps, b, bCI] = UnlimitGR(t, M, iop, Mmin, obj.NumBootStapItr);
@@ -433,7 +443,7 @@ classdef ShapeData < handle
 
                                 % Setup
                                 t = datenum(wdwData.Time); %#ok<*DATNM>
-                                M = wdwData.(obj.selectedMagnitudeMeasurement);
+                                M = wdwData.Magnitude;
                                 iop = double( replace(obj.SelectedTimeUnit, ["Day", "Month", "Year"], ["0", "1", "2"]) );
                                 Mmin = obj.selectedMagnitudeMinimum;
                                 Nsynth = obj.NumTrials;
@@ -469,7 +479,7 @@ classdef ShapeData < handle
 
                                 % Setup
                                 t = datenum(wdwData.Time);
-                                M = wdwData.(obj.selectedMagnitudeMeasurement);
+                                M = wdwData.Magnitude;
                                 iop = double( replace(obj.SelectedTimeUnit, ["Day", "Month", "Year"], ["0", "1", "2"]) );
                                 Mmin = obj.selectedMagnitudeMinimum;
                                 % Nsynth = obj.NumTrials;
@@ -614,9 +624,9 @@ classdef ShapeData < handle
 
                 % Magnitude Measurement: Display only chosen magnitude in
                 % filtered table
-                varIdx = obj.selectedMagnitudeMeasurement ...
-                    ~= obj.ValidMagnitudeMeasurements;
-                value = removevars(value, obj.ValidMagnitudeMeasurements(varIdx));
+                % varIdx = obj.selectedMagnitudeMeasurement ...
+                %     ~= obj.ValidMagnitudeMeasurements;
+                % value = removevars(value, obj.ValidMagnitudeMeasurements(varIdx));
 
                 % Add a cumulative number of events variable to the table
                 value.CumEvents = (1:height(value))';
@@ -666,7 +676,7 @@ classdef ShapeData < handle
         function value = get.MaxMagnitudeSeismicData(obj)
 
             if ~isempty(obj.SeismicData)
-                value = max( obj.SeismicData.(obj.selectedMagnitudeMeasurement) );
+                value = max( obj.SeismicData.Magnitude );
             else
                 value = [];
             end
@@ -676,12 +686,11 @@ classdef ShapeData < handle
         function value = get.AppliedFiltersTable(obj)
             % This returns a summary table of all the current filter values
 
-            FilterNames = ["Magnitude Measurement", "Minimum Magnitude", "Epicentral", ...
+            FilterNames = ["Minimum Magnitude", "Epicentral", ...
                 "Min Depth", "Max Depth", ...
                 "Start Time", "End Time"]';
 
-            FilterValues = {obj.selectedMagnitudeMeasurement, ...
-                obj.selectedMagnitudeMinimum, obj.selectedEpicentralValues, ...
+            FilterValues = {obj.selectedMagnitudeMinimum, obj.selectedEpicentralValues, ...
                 obj.selectedDepthRange(1), obj.selectedDepthRange(2), ...
                 obj.selectedDateRange(1), obj.selectedDateRange(2)}';
 
@@ -768,11 +777,11 @@ classdef ShapeData < handle
 
         end % set.WindowDates(obj, value)
 
-        function set.selectedMagnitudeMeasurement(obj, value)
-
-            obj.selectedMagnitudeMeasurement = validatestring(value, obj.ValidMagnitudeMeasurements);
-
-        end % set.selectedMagnitudeMeasurement(obj, value)
+        % function set.selectedMagnitudeMeasurement(obj, value)
+        % 
+        %     obj.selectedMagnitudeMeasurement = validatestring(value, obj.ValidMagnitudeMeasurements);
+        % 
+        % end % set.selectedMagnitudeMeasurement(obj, value)
 
         function set.selectedDateRange(obj, value)
 
@@ -802,16 +811,51 @@ classdef ShapeData < handle
 
     methods (Static, Access = private) % Static
 
-        function data = importData(fileName)
+        function data = importSeismicDataFile(fileName, requiredVarsColumn)
 
-            % Import data
-            data = readtimetable(fileName);
+            % requiredVarsColumn is provided by the user and is the column number
+            % for each of the required variables below in the supplied file
 
-            % Make timestamp name consistent
-            data.Properties.DimensionNames(1) = "Time";
+            % Define the required variables
+            RequiredVariables = ["Time", "Latitude", "Longitude", "Magnitude", "Depth"];
+
+            % Import as a table
+            data = readtable(fileName);
+
+            % Remove everything except the required columns
+            data = data(:, requiredVarsColumn);
+
+            % Set column names
+            data.Properties.VariableNames = RequiredVariables;
+
+            % Convert to a timetable using the supplied column index
+            data = table2timetable(data, "RowTimes", requiredVarsColumn(1));
 
             % Remove duplications in the data (measurements with same time)
-            [~, idx] = unique(data.(data.Properties.DimensionNames{1}));
+            [~, idx] = unique(data.(RequiredVariables(1)));
+            data = data(idx, :);
+
+        end % function data = importData(fileName, fieldsFileName)
+
+        function data = importProductionDataFile(fileName, requiredVarsColumn)
+
+            % requiredVarsColumn is provided by the user and is the column number
+            % for time (the only required variable) in the supplied file
+
+            % Define the required variables
+            RequiredVariables = "Time";
+
+            % Import as a table
+            data = readtable(fileName);
+
+            % Set column name for the time variables
+            data.Properties.VariableNames(requiredVarsColumn(1)) = RequiredVariables;
+
+            % Convert to a timetable using the supplied column index
+            data = table2timetable(data, "RowTimes", requiredVarsColumn(1));
+
+            % Remove duplications in the data (measurements with same time)
+            [~, idx] = unique(data.(RequiredVariables(1)));
             data = data(idx, :);
 
         end % function data = importData(fileName, fieldsFileName)

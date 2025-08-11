@@ -16,14 +16,17 @@ classdef tShapeData < matlab.unittest.TestCase
         function tCreateSeismic(testCase)
             % Setup - create a blank instance of ShapeData
             path = string( which("Vietnam_Seismic_Data.xlsx") );
-            S = shape.ShapeData(path);
+            SvarIdx = [1, 2, 3, 5, 4];
+            S = shape.ShapeData(path, SvarIdx);
         end
 
         function tCreateSeismicAndProduction(testCase)
             % Setup - create a blank instance of ShapeData
             Spath = string( which("Vietnam_Seismic_Data.xlsx") );
             Ppath = string( which("Vietnam_Production_Data.xlsx") );
-            S = shape.ShapeData(Spath, Ppath);
+            SvarIdx = [1, 2, 3, 5, 4];
+            PvarIdx = 1;
+            S = shape.ShapeData(Spath, SvarIdx, Ppath, PvarIdx);
         end
 
         function tFilterWithNonSequentialTimeRange(testCase)
@@ -33,7 +36,9 @@ classdef tShapeData < matlab.unittest.TestCase
             % Setup
             Spath = string( which("Vietnam_Seismic_Data.xlsx") );
             Ppath = string( which("Vietnam_Production_Data.xlsx") );
-            S = shape.ShapeData(Spath, Ppath);
+            SvarIdx = [1, 2, 3, 5, 4];
+            PvarIdx = 1;
+            S = shape.ShapeData(Spath, SvarIdx, Ppath, PvarIdx);
             S.selectedDateRange = [datetime(2017, 10, 1), datetime(2017, 1, 1)];
             
             % Query
@@ -50,7 +55,9 @@ classdef tShapeData < matlab.unittest.TestCase
             % Setup
             Spath = string( which("Vietnam_Seismic_Data.xlsx") );
             Ppath = string( which("Vietnam_Production_Data.xlsx") );
-            S = shape.ShapeData(Spath, Ppath);
+            SvarIdx = [1, 2, 3, 5, 4];
+            PvarIdx = 1;
+            S = shape.ShapeData(Spath, SvarIdx, Ppath, PvarIdx);
             S.selectedDateRange = [NaT, NaT];
 
             % Query
@@ -65,7 +72,9 @@ classdef tShapeData < matlab.unittest.TestCase
             % Setup
             Spath = string( which("Vietnam_Seismic_Data.xlsx") );
             Ppath = string( which("Vietnam_Production_Data.xlsx") );
-            S =shape.ShapeData(Spath, Ppath);
+            SvarIdx = [1, 2, 3, 5, 4];
+            PvarIdx = 1;
+            S = shape.ShapeData(Spath, SvarIdx, Ppath, PvarIdx);
 
             latLong = [15.4311  108.0537;
                 15.3437  108.0106;

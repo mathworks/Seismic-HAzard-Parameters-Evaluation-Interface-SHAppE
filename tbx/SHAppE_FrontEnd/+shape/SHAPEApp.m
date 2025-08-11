@@ -149,7 +149,7 @@ classdef SHAPEApp < handle
             obj.WindowSelectionTab.ForegroundColor = "k";
 
             % Move to results tab
-            obj.MainTabGroup.SelectedTab = obj.FilterTab;
+            % obj.MainTabGroup.SelectedTab = obj.FilterTab;
 
         end % onSeismicDataImported
 
