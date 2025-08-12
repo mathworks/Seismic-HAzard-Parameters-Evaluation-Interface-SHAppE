@@ -58,7 +58,7 @@ classdef selectEpicentral < shape.SHAPEComponent
                 "ColumnWidth", {"1x", 175});
 
             obj.GeoAxes = geoaxes(obj.MainGrid);
-            obj.GeoAxes.Basemap = obj.Basemap;
+            % obj.GeoAxes.Basemap = obj.Basemap;
             ControlPanel = uipanel(obj.MainGrid);
             ControlGrid = uigridlayout(ControlPanel, [5, 1], ...
                 "RowHeight", {"fit", "fit", "fit", "fit", "1x"});
@@ -91,10 +91,10 @@ classdef selectEpicentral < shape.SHAPEComponent
 
                 % Set up data points
                 colourData = repmat(obj.NotSelectedColour, ...
-                    length(obj.ShapeData.FilteredData.Lat), 1);
+                    length(obj.ShapeData.FilteredData.Latitude), 1);
 
-                set(obj.GeoScatter, "LongitudeData", obj.ShapeData.FilteredData.Long,...
-                    "LatitudeData", obj.ShapeData.FilteredData.Lat, "CData", colourData)
+                set(obj.GeoScatter, "LongitudeData", obj.ShapeData.FilteredData.Longitude,...
+                    "LatitudeData", obj.ShapeData.FilteredData.Latitude, "CData", colourData)
                 set([obj.DrawROIButton, ...
                     obj.ClearButton], "Enable", "on")
 
@@ -129,8 +129,8 @@ classdef selectEpicentral < shape.SHAPEComponent
 
                 % See what has been selected
                 idx = inROI(obj.ROI, ...
-                    obj.ShapeData.FilteredData.Lat, ...
-                    obj.ShapeData.FilteredData.Long);
+                    obj.ShapeData.FilteredData.Latitude, ...
+                    obj.ShapeData.FilteredData.Longitude);
 
                 % Measure how many points were selected
                 numSelectedPoints = sum(idx);

@@ -57,14 +57,10 @@ classdef selectMagnitude < shape.SHAPEComponent
 
             % Control panel and grid
             ControlPanel = uipanel(obj.MainGrid);
-            ControlGrid = uigridlayout(ControlPanel, [5, 2], ...
-                "RowHeight", {"fit", "fit", "fit", "fit", "1x"});
+            ControlGrid = uigridlayout(ControlPanel, [4, 2], ...
+                "RowHeight", {"fit", "fit", "fit", "1x"});
 
             % Controls
-            uilabel(ControlGrid, "Text", "Selected Unit", ...
-                "HorizontalAlignment", "right");
-            obj.SelectedMagnitudeDropDown = uidropdown(ControlGrid, ...
-                "ValueChangedFcn", @obj.onSelectedMagnitudeChanged);
             uilabel(ControlGrid, "Text", "Minimum", ...
                 "HorizontalAlignment", "right");
             obj.MagLimitSpinner = uispinner(ControlGrid, ...
@@ -95,12 +91,8 @@ classdef selectMagnitude < shape.SHAPEComponent
 
             if ~isempty(obj.ShapeData.SeismicData)
 
-                % Set up drop down
-                obj.SelectedMagnitudeDropDown.Items = obj.ShapeData.ValidMagnitudeMeasurements;
-                obj.SelectedMagnitudeDropDown.ItemsData = obj.ShapeData.ValidMagnitudeMeasurements;
-
                 % Set up data
-                magnitudeData = obj.ShapeData.FilteredData.(obj.ShapeData.selectedMagnitudeMeasurement);
+                magnitudeData = obj.ShapeData.FilteredData.Magnitude;
                 obj.Histogram.Data = magnitudeData;
 
                 if ~isempty(magnitudeData)
@@ -130,16 +122,6 @@ classdef selectMagnitude < shape.SHAPEComponent
     end % setup & update methods
 
     methods % callbacks
-
-        function onSelectedMagnitudeChanged(obj, ~, ~)
-
-            % Change magnitude unit filter property
-            % Apply button not required for this to be applied its automatic
-            magMeasurement = obj.SelectedMagnitudeDropDown.Value;
-            obj.ShapeData.setDefaultFilter("selectedMagnitudeMinimum")
-            obj.ShapeData.Filter("selectedMagnitudeMeasurement", magMeasurement)
-
-        end
 
         function onSpinnerChanged(obj, ~, ~)
 
