@@ -13,6 +13,7 @@ classdef SHAPEApp < handle
         WindowSelectionTab matlab.ui.container.Tab
         ProcessingTab matlab.ui.container.Tab
         ViewResultsTab matlab.ui.container.Tab
+        ToggleTabs matlab.ui.container.Tab
         FilterTabGrid matlab.ui.container.GridLayout
         FilterTabGroup  matlab.ui.container.TabGroup
         FilterOptionsTable matlab.ui.control.Table
@@ -64,14 +65,22 @@ classdef SHAPEApp < handle
                 "SelectionChangedFcn", @obj.onMainTabChanged);
             obj.ImportTab = uitab(obj.MainTabGroup,"Title","Import", ...
                 "UserData", "On");
-            obj.FilterTab = uitab(obj.MainTabGroup,"Title","Filter", ...
-                "UserData", "Off", "ForegroundColor", [0.8, 0.8, 0.8]);
-            obj.WindowSelectionTab = uitab(obj.MainTabGroup,"Title","Window Selection", ...
-                "UserData", "Off", "ForegroundColor", [0.8, 0.8, 0.8]);
-            obj.ProcessingTab = uitab(obj.MainTabGroup,"Title","Process Data", ...
-                "UserData", "Off", "ForegroundColor", [0.8, 0.8, 0.8]);
-            obj.ViewResultsTab = uitab(obj.MainTabGroup,"Title","View Results", ...
-                "UserData", "Off", "ForegroundColor", [0.8, 0.8, 0.8]);
+            obj.FilterTab = uitab(obj.MainTabGroup,"Title","Filter");
+            obj.WindowSelectionTab = uitab(obj.MainTabGroup,"Title","Window Selection");
+            obj.ProcessingTab = uitab(obj.MainTabGroup,"Title","Process Data");
+            obj.ViewResultsTab = uitab(obj.MainTabGroup,"Title","View Results");
+
+            % Save a referance to tabs which can be toggled on/off for convienience
+            obj.ToggleTabs = [obj.FilterTab, obj.WindowSelectionTab, ...
+                obj.ProcessingTab, obj.ViewResultsTab];
+
+            % Set initial state of toggle tabs to 'off'
+            switch obj.Figure.Theme.Name
+                case "Light Theme"
+                    set(obj.ToggleTabs, "UserData", "Off", "ForegroundColor", 0.8*ones(1, 3))
+                case "Dark Theme"
+                    set(obj.ToggleTabs, "UserData", "Off", "ForegroundColor", 0.45*ones(1, 3))
+            end
 
             % Filtering tab
             obj.FilterTabGrid = uigridlayout(obj.FilterTab, [2, 2], ...
@@ -143,10 +152,12 @@ classdef SHAPEApp < handle
             obj.onFiltersChanged();
 
             % "Turn on" filter and set windows tabs
-            obj.FilterTab.UserData = "On";
-            obj.FilterTab.ForegroundColor = "k";
-            obj.WindowSelectionTab.UserData = "On"; % Having to do it like this as tabs dont have a visible or enabled property - see ontabchanged callback
-            obj.WindowSelectionTab.ForegroundColor = "k";
+            switch obj.Figure.Theme.Name
+                case "Light Theme"
+                    set(obj.ToggleTabs([1, 2]), "UserData", "On", "ForegroundColor", 0.1294*ones(1, 3))
+                case "Dark Theme"
+                    set(obj.ToggleTabs([1, 2]), "UserData", "On", "ForegroundColor", 0.851*ones(1, 3))
+            end
 
             % Move to results tab
             % obj.MainTabGroup.SelectedTab = obj.FilterTab;
@@ -160,17 +171,26 @@ classdef SHAPEApp < handle
         end % onFiltersChanged
 
         function onWindowsSet(obj, ~, ~)
+
             % "Turn on" processing tab
-            obj.ProcessingTab.UserData = "On";
-            obj.ProcessingTab.ForegroundColor = "k";
+            switch obj.Figure.Theme.Name
+                case "Light Theme"
+                    set(obj.ToggleTabs(3), "UserData", "On", "ForegroundColor", 0.1294*ones(1, 3))
+                case "Dark Theme"
+                    set(obj.ToggleTabs(3), "UserData", "On", "ForegroundColor", 0.851*ones(1, 3))
+            end
 
         end % onWindowsSet
 
         function onAnalysisComplete(obj, ~, ~)
 
             % "Turn on" results tab
-            obj.ViewResultsTab.UserData = "On";
-            obj.ViewResultsTab.ForegroundColor = "k";
+            switch obj.Figure.Theme.Name
+                case "Light Theme"
+                    set(obj.ToggleTabs(4), "UserData", "On", "ForegroundColor", 0.1294*ones(1, 3))
+                case "Dark Theme"
+                    set(obj.ToggleTabs(4), "UserData", "On", "ForegroundColor", 0.851*ones(1, 3))
+            end
 
             % Move to results tab
             obj.MainTabGroup.SelectedTab = obj.ViewResultsTab;
@@ -203,10 +223,13 @@ classdef SHAPEApp < handle
                         % results tab listener)
                         obj.ShapeData.ClearResults()
 
-                        % 'Disable' results tab
-                        set(obj.ViewResultsTab, ...
-                            "UserData", "Off", ...
-                            "ForegroundColor", [0.8, 0.8, 0.8])
+                        % "Turn off" results tab
+                        switch obj.Figure.Theme.Name
+                            case "Light Theme"
+                                set(obj.ToggleTabs(4), "UserData", "Off", "ForegroundColor", 0.8*ones(1, 3))
+                            case "Dark Theme"
+                                set(obj.ToggleTabs(4), "UserData", "Off", "ForegroundColor", 0.45*ones(1, 3))
+                        end
 
                         % Switch to selected tab
                         obj.MainTabGroup.SelectedTab = e.NewValue;
