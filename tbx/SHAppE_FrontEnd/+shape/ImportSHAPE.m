@@ -14,8 +14,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
         ClearButton (1, 1) matlab.ui.control.Button
 
         ImportedDisplayTable matlab.ui.control.Table
-
-          
     end
 
     properties
@@ -64,8 +62,12 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 "ColumnWidth", {"fit", "fit"});
 
             % Getting started buttons
-            uibutton(startGrid, "text", "Open Documentation");
-            uibutton(startGrid, "text", "Move Examples files to PWD");
+            uibutton(startGrid, ...
+                "text", "Open Documentation", ...
+                "ButtonPushedFcn", @obj.onDocButtonPushed);
+            uibutton(startGrid, ...
+                "text", "Move Examples files to PWD", ...
+                "ButtonPushedFcn", @obj.onCopyExampleFilesButtonPushed);
 
             % Import files panel
             obj.ControlsPanel = uipanel(obj.MainGrid, ...
@@ -171,6 +173,37 @@ classdef ImportSHAPE < shape.SHAPEComponent
     end % methods setup update
 
     methods
+
+        function onDocButtonPushed(obj, ~, ~)
+            try
+                path = which("GettingStartedWithSHAppE.mlx");
+                edit(path)
+            catch M
+                uialert(ancestor(obj, "matlab.ui.Figure"), ...
+                    ["Unable to open documentation";...
+                    "Error: " + M.message], ...
+                    "Open failed")
+            end
+        end
+
+        function onCopyExampleFilesButtonPushed(obj, ~, ~)
+            try
+                % Add SHAppE data files to the working directory
+                copyfile(which("Vietnam_Seismic_Data.xlsx"), pwd)
+                copyfile(which("Vietnam_Production_Data.xlsx"), pwd)
+                copyfile(which("Example_Windows.xlsx"), pwd)
+
+                uialert(ancestor(obj, "matlab.ui.Figure"), ...
+                    "Example files copied to working directory successfully", ...
+                    "Example Files Copied", ...
+                    "Icon", "success")
+            catch M
+                uialert(ancestor(obj, "matlab.ui.Figure"), ...
+                    ["Unable to copy example files";...
+                    "Error: " + M.message], ...
+                    "Copy failed")
+            end
+        end
 
         function onBrowseButtonPressed(obj, source, ~)
 
