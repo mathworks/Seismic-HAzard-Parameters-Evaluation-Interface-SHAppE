@@ -9,10 +9,13 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         FileNameDisplays (1, 4) matlab.ui.control.EditField
         BrowseButtons (1, 4) matlab.ui.control.Button
+        VarColumnIdxSpinners (1, 6) matlab.ui.control.Spinner  
         ImportButton (1, 1) matlab.ui.control.Button
         ClearButton (1, 1) matlab.ui.control.Button
 
         ImportedDisplayTable matlab.ui.control.Table
+
+          
     end
 
     properties
@@ -49,55 +52,10 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 "RowHeight", {"fit", "fit", "1x"}, ...
                 "ColumnWidth", {"fit", "1x"});
 
-            % Import files panel
-            obj.ControlsPanel = uipanel(obj.MainGrid, ...
-                "Title", "Select files to import");
-            obj.ControlsPanel.Layout.Row = 1;
-            obj.ControlsPanel.Layout.Column = 1;
-
-            obj.ControlsGrid = uigridlayout(obj.ControlsPanel, [7, 3], ...
-                "RowHeight", {"fit", "fit", "fit", "fit", "fit", "fit", "1x"}, ...
-                "ColumnWidth", {"fit", "fit", "fit"});
-
-            % File selector buttons
-            labelText = ["Seismic data file name", ...
-                "Production data file name (Optional)"];
-
-            for k = 1:2
-
-                % Create label
-                uilabel(obj.ControlsGrid, "Text", labelText(k));
-
-                % Create edit box
-                obj.FileNameDisplays(k) = ...
-                    uieditfield(obj.ControlsGrid, ...
-                    "Editable", "off");
-
-                % Create button
-                obj.BrowseButtons(k) = ...
-                    uibutton(obj.ControlsGrid, ...
-                    "ButtonPushedFcn", @obj.onBrowseButtonPressed, ...
-                    "UserData", k, ...
-                    "Text", "Browse");
-
-            end % for
-
-            % Import button
-            obj.ImportButton = uibutton(obj.ControlsGrid, ...
-                "Text", "Import", ...
-                "ButtonPushedFcn", @obj.onImportButtonPressed);
-
-            % Clear button
-            obj.ClearButton = uibutton(obj.ControlsGrid, ...
-                "Text", "Clear", ...
-                "ButtonPushedFcn", @obj.onClearButtonPressed);
-            obj.ClearButton.Layout.Row = 3;
-            obj.ClearButton.Layout.Column = 3;
-
             % Getting started panel
             startPanel = uipanel(obj.MainGrid, ...
                 "Title", "Getting Started");
-            startPanel.Layout.Row = 2;
+            startPanel.Layout.Row = 1;
             startPanel.Layout.Column = 1;
 
             % Getting started grid
@@ -109,44 +67,104 @@ classdef ImportSHAPE < shape.SHAPEComponent
             uibutton(startGrid, "text", "Open Documentation");
             uibutton(startGrid, "text", "Move Examples files to PWD");
 
+            % Import files panel
+            obj.ControlsPanel = uipanel(obj.MainGrid, ...
+                "Title", "Select files to import");
+            obj.ControlsPanel.Layout.Row = 2;
+            obj.ControlsPanel.Layout.Column = 1;
+
+            obj.ControlsGrid = uigridlayout(obj.ControlsPanel, [12, 3], ...
+                "RowHeight", {"fit", "fit", "fit", "fit", "fit", "fit", ...
+                "fit", 25, "fit", "fit", "fit", 25, "fit"}, ...
+                "ColumnWidth", {"fit", "fit", "fit"});
+
+            % Seismic label
+            uilabel(obj.ControlsGrid, "Text", "Seismic data file name");
+
+            % Seismic edit box
+            obj.FileNameDisplays(1) = ...
+                uieditfield(obj.ControlsGrid, ...
+                "Editable", "off");
+
+            % Seismic browse button
+            obj.BrowseButtons(1) = ...
+                uibutton(obj.ControlsGrid, ...
+                "ButtonPushedFcn", @obj.onBrowseButtonPressed, ...
+                "UserData", 1, ...
+                "Text", "Browse");
+
+            % Required variable labels
+            reqVarBlurb = uilabel(obj.ControlsGrid, ...
+                "Text", "Specify column number in your file for each variable");
+            reqVarBlurb.Layout.Column = [1, 3];
+            RequiredVariables = ["Time", "Latitude", "Longitude", "Magnitude", "Depth"];
+            for k = 1:length(RequiredVariables)
+                uilabel(obj.ControlsGrid, "Text", RequiredVariables(k));
+                obj.VarColumnIdxSpinners(k) = uispinner(obj.ControlsGrid, ...
+                    "RoundFractionalValues","on", ...
+                    "Limits", [1, inf]);
+                obj.VarColumnIdxSpinners(k).Layout.Column = [2, 3];
+            end
+
+            % Production label
+            prodLbl = uilabel(obj.ControlsGrid, ...
+                "Text", "Production data file name (Optional)");
+            prodLbl.Layout.Row = 9;
+
+            % Production edit box
+            obj.FileNameDisplays(2) = ...
+                uieditfield(obj.ControlsGrid, ...
+                "Editable", "off");
+
+            % Production browse button
+            obj.BrowseButtons(2) = ...
+                uibutton(obj.ControlsGrid, ...
+                "ButtonPushedFcn", @obj.onBrowseButtonPressed, ...
+                "UserData", 2, ...
+                "Text", "Browse");
+
+            % Required variable labels
+            reqVarBlurb = uilabel(obj.ControlsGrid, ...
+                "Text", "Specify column number in your file for the Time variable");
+            reqVarBlurb.Layout.Column = [1, 3];
+            uilabel(obj.ControlsGrid, "Text", "Time");
+            obj.VarColumnIdxSpinners(6) = uispinner(obj.ControlsGrid, ...
+                    "RoundFractionalValues","on", ...
+                    "Limits", [1, inf]);
+            obj.VarColumnIdxSpinners(6).Layout.Column = [2, 3];
+
+            % Import button
+            obj.ImportButton = uibutton(obj.ControlsGrid, ...
+                "Text", "Import", ...
+                "ButtonPushedFcn", @obj.onImportButtonPressed);
+            obj.ImportButton.Layout.Row = 13;
+
+            % Clear button
+            obj.ClearButton = uibutton(obj.ControlsGrid, ...
+                "Text", "Clear", ...
+                "ButtonPushedFcn", @obj.onClearButtonPressed);
+            obj.ClearButton.Layout.Column = 3;
+
             % Imported data panel
             importedPanel = uipanel(obj.MainGrid, ...
-                "Title", "Imported Data");
+                "Title", "Data Preview");
             importedPanel.Layout.Row = [1, 2];
             importedPanel.Layout.Column = 2;
 
             % Imported data grid
-            importedGrid = uigridlayout(importedPanel, [2, 1]);
-
-            % Imported selector panel
-            RqrdVarNames = ["Time", "Longitude", "Latitude", "Magnitude", "Depth"];
-            numRqrdVars = length(RqrdVarNames);
-            selectorPanel = uipanel(importedGrid);
-            selectorGrid = uigridlayout(selectorPanel, [numRqrdVars+1, 2], ...
-                "ColumnWidth", ["fit", "fit"]);
-            
-            for k = 1:numRqrdVars
-                uilabel(selectorGrid, "Text", RqrdVarNames(k));
-                uidropdown(selectorGrid);
-            end
-            selectorGrid.RowHeight = repmat("fit", 1, numRqrdVars+1);
+            importedGrid = uigridlayout(importedPanel, [1, 1]);
 
             % Imported data display table
             obj.ImportedDisplayTable = uitable(importedGrid);
 
             % make everything in imported panel invisible
-            set(importedPanel.Children, "Visible", "off")
+            set(importedPanel.Children, "Visible", "on")
 
         end
 
         function update(obj, ~, ~)
 
             % This method is run whenever a public property is changed
-
-            if ~isempty(obj.ShapeData.SeismicData)
-                obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.SeismicData );
-            end
 
         end
 
@@ -181,10 +199,18 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
             if all( fileNamesExist )
 
+                % Collate required variable column numbers
+                SeismicDataColumnNumbers = [obj.VarColumnIdxSpinners(1:5).Value];
+                ProductionDataColumnNumbers = obj.VarColumnIdxSpinners(6).Value;
+
                 % Import both files
                 try
-                    obj.ShapeData.importSeismicData(obj.FileNames(1));
-                    obj.ShapeData.importProductionData(obj.FileNames(2));
+                    obj.ShapeData.importSeismicData(obj.FileNames(1), SeismicDataColumnNumbers);
+                    obj.ShapeData.importProductionData(obj.FileNames(2), ProductionDataColumnNumbers);
+
+                    % Display preview of imported data
+                    obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
 
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...
@@ -199,9 +225,16 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
             elseif fileNamesExist(1)
 
+                % Collate required variable column numbers
+                SeismicDataColumnNumbers = [obj.VarColumnIdxSpinners(1:5).Value];
+
                 % Import sensimic data only
                 try
-                    obj.ShapeData.importSeismicData(obj.FileNames(1));
+                    obj.ShapeData.importSeismicData(obj.FileNames(1), SeismicDataColumnNumbers);
+
+                    % Display preview of imported data
+                    obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
 
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...
