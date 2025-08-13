@@ -7,13 +7,17 @@ classdef selectEpicentral < shape.SHAPEComponent
         GeoAxes matlab.graphics.axis.GeographicAxes
         GeoScatter matlab.graphics.chart.primitive.Scatter
         DrawROIButton matlab.ui.control.Button
+        BaseMapDropDown matlab.ui.control.DropDown
         ROI images.roi.Polygon
         ApplyButton matlab.ui.control.Button
         ClearButton matlab.ui.control.Button
     end
 
     properties
-        Basemap = "topographic"
+        BaseMaps = ["darkwater", "grayland", "bluegreen", ...
+            "grayterrain", "colorterrain", "landcover", ...
+            "streets", "streets-light", "streets-dark", ...
+            "satellite", "topographic"];
     end
 
     properties (Constant, Access=private)
@@ -58,14 +62,22 @@ classdef selectEpicentral < shape.SHAPEComponent
                 "ColumnWidth", {"1x", 175});
 
             obj.GeoAxes = geoaxes(obj.MainGrid);
-            % obj.GeoAxes.Basemap = obj.Basemap;
+            geobasemap(obj.GeoAxes, obj.BaseMaps(1))
             ControlPanel = uipanel(obj.MainGrid);
-            ControlGrid = uigridlayout(ControlPanel, [5, 1], ...
-                "RowHeight", {"fit", "fit", "fit", "fit", "1x"});
+            ControlGrid = uigridlayout(ControlPanel, [6, 1], ...
+                "RowHeight", {"fit", "fit", 15, "fit", "fit", "fit"});
 
+            % Dropdown to select basemap
+            uilabel(ControlGrid, "Text", "Select base map style");
+            obj.BaseMapDropDown = uidropdown(ControlGrid, ...
+                "Items", obj.BaseMaps, ...
+                "ValueChangedFcn", @obj.onBaseMapDDChanged);
+
+            % Button to draw ROI
             obj.DrawROIButton = uibutton(ControlGrid, ...
                 "Text", "Draw New ROI", ...
                 "ButtonPushedFcn", @obj.DrawPoly);
+            obj.DrawROIButton.Layout.Row = 4;
 
             % Create data graphics
             obj.GeoScatter = geoscatter(obj.GeoAxes, ...
@@ -164,6 +176,11 @@ classdef selectEpicentral < shape.SHAPEComponent
     end % Poly methods
 
     methods % callbacks
+
+        function onBaseMapDDChanged(obj, ~, ~)
+            selectedBaseMap = obj.BaseMapDropDown.Value;
+            geobasemap(obj.GeoAxes, selectedBaseMap)
+        end
 
         function onApplyButtonPushed(obj, ~, ~)
 

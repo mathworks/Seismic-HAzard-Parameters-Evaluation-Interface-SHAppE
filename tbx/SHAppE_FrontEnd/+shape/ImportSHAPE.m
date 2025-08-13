@@ -47,7 +47,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
             % Main grid
             obj.MainGrid = uigridlayout(obj, [1, 2], ...
-                "RowHeight", {"fit", "fit"}, ...
+                "RowHeight", {"fit"}, ...
                 "ColumnWidth", {"fit", "1x"});
 
             % Getting started panel
@@ -167,7 +167,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
         function update(obj, ~, ~)
 
             % This method is run whenever a public property is changed
-
+            
         end
 
     end % methods setup update
