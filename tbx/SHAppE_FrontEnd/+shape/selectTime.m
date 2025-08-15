@@ -126,6 +126,9 @@ classdef selectTime < shape.SHAPEComponent
                 set(obj.ChartData, "XData", obj.ShapeData.FilteredData.(timeStampVarName),...
                     "YData", obj.ShapeData.FilteredData.CumEvents)
 
+                % Set chart title
+                obj.Axes.Title.String = obj.ShapeData.NumFilteredDataPoints + " Events";
+
                 % Enable controls
                 set([obj.RestoreButton, ...
                     obj.StartDateBound, ...

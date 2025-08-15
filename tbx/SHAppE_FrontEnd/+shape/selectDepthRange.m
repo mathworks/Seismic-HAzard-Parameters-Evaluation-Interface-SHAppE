@@ -125,6 +125,9 @@ classdef selectDepthRange < shape.SHAPEComponent
                 obj.Histogram.Data = obj.ShapeData.FilteredData.Depth;
                 obj.Histogram.NumBins = obj.BinsSpinner.Value;
 
+                % Set chart title
+                obj.HistAxes.Title.String = obj.ShapeData.NumFilteredDataPoints + " Events";
+
                 % set Scatter plot
                 set(obj.Scatter, "XData", 1:height(obj.ShapeData.FilteredData),...
                     "YData", obj.ShapeData.FilteredData.Depth)

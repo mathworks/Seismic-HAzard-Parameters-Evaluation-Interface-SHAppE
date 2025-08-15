@@ -95,6 +95,9 @@ classdef selectMagnitude < shape.SHAPEComponent
                 magnitudeData = obj.ShapeData.FilteredData.Magnitude;
                 obj.Histogram.Data = magnitudeData;
 
+                % Set chart title
+                obj.Axes.Title.String = obj.ShapeData.NumFilteredDataPoints + " Events";
+
                 if ~isempty(magnitudeData)
                     % Set up histogram edges
                     obj.Histogram.BinEdges = min(magnitudeData)-0.05:0.1:max(magnitudeData)+0.05;
