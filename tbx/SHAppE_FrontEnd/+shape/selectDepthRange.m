@@ -56,6 +56,7 @@ classdef selectDepthRange < shape.SHAPEComponent
             obj.MainGrid = uigridlayout(obj, [1, 3], ...
                 "ColumnWidth", {'1x', '1x', 175});
 
+            % Create axis
             obj.HistAxes = axes(obj.MainGrid);
             obj.ScatterAxes = axes(obj.MainGrid);
 
@@ -93,6 +94,12 @@ classdef selectDepthRange < shape.SHAPEComponent
             obj.Scatter = scatter(obj.ScatterAxes, NaN, NaN);
             obj.ScatterAxes.YDir = "reverse";
             grid(obj.ScatterAxes, "on")
+
+            % Set labels
+            xlabel(obj.HistAxes, "Depth")
+            ylabel(obj.HistAxes, "Frequency")
+            xlabel(obj.ScatterAxes, "Event Number")
+            ylabel(obj.ScatterAxes, "Depth")
 
             % Initialise x and y lines
             obj.MinHistLine = xline(obj.HistAxes, NaN);

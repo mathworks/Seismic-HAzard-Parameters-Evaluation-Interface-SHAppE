@@ -57,8 +57,8 @@ classdef selectMagnitude < shape.SHAPEComponent
 
             % Control panel and grid
             ControlPanel = uipanel(obj.MainGrid);
-            ControlGrid = uigridlayout(ControlPanel, [4, 2], ...
-                "RowHeight", {"fit", "fit", "fit", "1x"});
+            ControlGrid = uigridlayout(ControlPanel, [3, 2], ...
+                "RowHeight", {"fit", "fit", "fit"});
 
             % Controls
             uilabel(ControlGrid, "Text", "Minimum", ...

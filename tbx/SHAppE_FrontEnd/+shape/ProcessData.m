@@ -55,14 +55,14 @@ classdef ProcessData < shape.SHAPEComponent
             % Main grid
             obj.MainGrid = uigridlayout(obj, [2, 2], ...
                 "ColumnWidth", {300, "1x"}, ...
-                "RowHeight", {"fit", "fit"});
+                "RowHeight", {"fit", "1x"});
 
             % Description
             description = uilabel(obj.MainGrid, "Text", "Select data analysis options");
             description.Layout.Column = [1, 2];
 
             SubGrid = uigridlayout(obj.MainGrid, [5, 1], ...                
-                "RowHeight", {90, "fit", "fit", "fit", "Fit"});
+                "RowHeight", {"fit", "fit", "fit", "fit", "fit"});
 
             % Method
             methodPanel = uipanel(SubGrid, "Title", "Method");

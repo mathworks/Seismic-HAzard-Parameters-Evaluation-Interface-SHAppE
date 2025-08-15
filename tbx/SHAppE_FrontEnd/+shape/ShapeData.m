@@ -825,6 +825,8 @@ classdef ShapeData < handle
             % Remove everything except the required columns
             data = data(:, requiredVarsColumn);
 
+            % Check datatype of each column            
+
             % Set column names
             data.Properties.VariableNames = RequiredVariables;
 
