@@ -127,7 +127,8 @@ classdef selectTime < shape.SHAPEComponent
                     "YData", obj.ShapeData.FilteredData.CumEvents)
 
                 % Set chart title
-                obj.Axes.Title.String = obj.ShapeData.NumFilteredDataPoints + " Events";
+                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
 
                 % Enable controls
                 set([obj.RestoreButton, ...

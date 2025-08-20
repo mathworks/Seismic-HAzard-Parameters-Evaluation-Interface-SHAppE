@@ -12,8 +12,6 @@ classdef ShapeData < handle
         selectedDateRange (1, 2) datetime = [NaT, NaT]          % lower and upper time range
         selectedEpicentralValues (:, 2) {mustBeNumeric, mustBeFinite, mustBePositive} % latitude and longitude values for each point of the epicentral ROI
         selectedDepthRange (1, 2) {mustBeNumeric} = [NaN, NaN]  % lower and upper depth limits
-        % selectedMagnitudeMeasurement (1, 1) string ...          % Selected magnitude measurement
-        %     = shape.ShapeData.ValidMagnitudeMeasurements(1)
         selectedMagnitudeMinimum (1, 1) {mustBeNumeric} = NaN   % Magnitude lower limit
         WindowDates (:, 2) datetime = datetime.empty( 0, 2 )
         WindowMethodInfo struct
@@ -22,6 +20,7 @@ classdef ShapeData < handle
     properties ( Dependent, SetAccess = private )
         FilteredData
         NumFilteredDataPoints (1, 1) {mustBeNumeric}
+        NumSeismicDataPoints (1, 1) {mustBeNumeric}
         MidDate (1, 1) datetime
         TotalDepthRange (1, 2) {mustBeNumeric}
         MaxMagnitudeSeismicData (1, 1) {mustBeNumeric}
@@ -651,6 +650,12 @@ classdef ShapeData < handle
         function value = get.NumFilteredDataPoints(obj)
 
             value = height(obj.FilteredData);
+
+        end
+
+        function value = get.NumSeismicDataPoints(obj)
+
+            value = height(obj.SeismicData);
 
         end
 

@@ -111,7 +111,8 @@ classdef selectEpicentral < shape.SHAPEComponent
                     obj.ClearButton], "Enable", "on")
 
                 % Set chart title
-                obj.GeoAxes.Title.String = obj.ShapeData.NumFilteredDataPoints + " Events";
+                obj.GeoAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
 
                 if ~isempty(obj.ROI.Position)
                     obj.ApplyButton.Enable = "on";

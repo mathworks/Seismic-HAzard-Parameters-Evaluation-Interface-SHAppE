@@ -96,7 +96,8 @@ classdef selectMagnitude < shape.SHAPEComponent
                 obj.Histogram.Data = magnitudeData;
 
                 % Set chart title
-                obj.Axes.Title.String = obj.ShapeData.NumFilteredDataPoints + " Events";
+                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
 
                 if ~isempty(magnitudeData)
                     % Set up histogram edges
