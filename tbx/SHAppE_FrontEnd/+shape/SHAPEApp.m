@@ -41,6 +41,7 @@ classdef SHAPEApp < handle
         FiltersChanged (:, 1) event.listener {mustBeScalarOrEmpty}
         WindowsSet (:, 1) event.listener {mustBeScalarOrEmpty}
         AnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
+        mouseListener (:, 1) event.listener {mustBeScalarOrEmpty}        
     end
 
     methods % Constructor
@@ -57,12 +58,14 @@ classdef SHAPEApp < handle
             obj.Figure = uifigure("Units", "normalized", ...
                 "Position", [0.2, 0.2, 0.6, 0.6], ...
                 "AutoResizeChildren", "off", ...
-                "WindowButtonMotionFcn", @obj.MouseHoverCallback, ...
-                "Name", "SHAppE");
+                "Name", "SHAppE: Seismic HAzard Parameters Evaluation Interface");
+                %"WindowButtonMotionFcn", @obj.MouseHoverCallback);              
+
+            % obj.mouseListener = listener(obj.Figure, "WindowMouseMotion", @obj.MouseHoverCallback);
 
             obj.MainTabGroup = uitabgroup(obj.Figure, "Units","normalized", ...
                 "Position", [0, 0, 1, 1], ...
-                "SelectionChangedFcn", @obj.onMainTabChanged);
+                "SelectionChangedFcn", @obj.onTabChanged);
             obj.ImportTab = uitab(obj.MainTabGroup,"Title","Import", ...
                 "UserData", "On");
             obj.FilterTab = uitab(obj.MainTabGroup,"Title","Filter");
@@ -92,7 +95,8 @@ classdef SHAPEApp < handle
 
             % Filtering tabs
             obj.FilterTabGroup = uitabgroup(obj.FilterTabGrid, ...
-                "Units","normalized");
+                "Units","normalized", ...
+                "SelectionChangedFcn", @obj.onTabChanged);
             obj.FilterTabGroup.Layout.Row = 2;
             obj.FilterTabGroup.Layout.Column = 1;
             drawnow % This is here to make sure uitabgroup is created correctly
@@ -124,6 +128,7 @@ classdef SHAPEApp < handle
 
             % Date selection
             obj.SelectDateRegionsComponent = shape.selectWindows(shapeData, "Parent", obj.WindowSelectionTab);
+            obj.SelectDateRegionsComponent.TabGroup.SelectionChangedFcn = @obj.onTabChanged;
 
             % Processing
             obj.ProcessComponent = shape.ProcessData(shapeData, "Parent", obj.ProcessingTab);
@@ -197,12 +202,28 @@ classdef SHAPEApp < handle
 
         end % onAnalysisComplete      
 
-        function onMainTabChanged(obj, ~, e)
+        function onTabChanged(obj, ~, e)
             
-            % Check is selected tab is "On" (Enabled)
-            if e.NewValue.UserData ~= "On"
+            % If selected tab is "Off" (Disabled)
+            if string( e.NewValue.UserData ) ~= "On"
                 % Go back to previous tab
                 obj.MainTabGroup.SelectedTab = e.OldValue;
+            end
+
+            % Set mouseovercallback if appropriate
+            if (obj.MainTabGroup.SelectedTab == obj.FilterTab) && ...
+                    (obj.FilterTabGroup.SelectedTab == obj.TimeCropTab)
+                % Set mouseover callback
+                obj.Figure.WindowButtonMotionFcn = @obj.MouseHoverCallback;
+
+            elseif (obj.MainTabGroup.SelectedTab == obj.WindowSelectionTab) && ...
+                    (obj.WindowSelectionTab.Children.TabGroup.SelectedTab == obj.WindowSelectionTab.Children.GraphicalTab)
+                % Set mouseover callback
+                obj.Figure.WindowButtonMotionFcn = @obj.MouseHoverCallback;
+
+            else
+                % Set no mouseover callback
+                obj.Figure.WindowButtonMotionFcn = [];
             end
 
             % Wipe results if going from results tab backwards

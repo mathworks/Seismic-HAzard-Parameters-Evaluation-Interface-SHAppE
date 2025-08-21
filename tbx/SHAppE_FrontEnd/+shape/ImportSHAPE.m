@@ -108,6 +108,11 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 obj.VarColumnIdxSpinners(k).Layout.Column = [2, 3];
             end
 
+            num = [1, 2, 3, 5, 4];
+            for k = 1:5
+                obj.VarColumnIdxSpinners(k).Value = num(k);
+            end
+
             % Production label
             prodLbl = uilabel(obj.ControlsGrid, ...
                 "Text", "Production data file name (Optional)");

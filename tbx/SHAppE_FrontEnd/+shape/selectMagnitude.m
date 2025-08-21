@@ -92,20 +92,21 @@ classdef selectMagnitude < shape.SHAPEComponent
             if ~isempty(obj.ShapeData.SeismicData)
 
                 % Set up data
-                magnitudeData = obj.ShapeData.FilteredData.Magnitude;
-                obj.Histogram.Data = magnitudeData;
+                allMagnitudeData = obj.ShapeData.SeismicData.Magnitude;
+                filteredMagnitudeData = obj.ShapeData.FilteredData.Magnitude;
+                obj.Histogram.Data = filteredMagnitudeData;
 
                 % Set chart title
                 obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
                     "/" + obj.ShapeData.NumSeismicDataPoints;
 
-                if ~isempty(magnitudeData)
+                if ~isempty(filteredMagnitudeData)
                     % Set up histogram edges
-                    obj.Histogram.BinEdges = min(magnitudeData)-0.05:0.1:max(magnitudeData)+0.05;
+                    obj.Histogram.BinEdges = min(filteredMagnitudeData)-0.05:0.1:max(filteredMagnitudeData)+0.05;
 
                     % Set up spinner and xline
-                    obj.MagLimitSpinner.Limits = [0, max(magnitudeData)]; %[min(magnitudeData), max(magnitudeData)];
-                    obj.MagLimitSpinner.Value = obj.ShapeData.selectedMagnitudeMinimum; %obj.MagLimitSpinner.Limits(1) + diff(obj.MagLimitSpinner.Limits)/2;
+                    obj.MagLimitSpinner.Limits = [min(allMagnitudeData), max(allMagnitudeData)];
+                    obj.MagLimitSpinner.Value = obj.ShapeData.selectedMagnitudeMinimum;
                     obj.onSpinnerChanged()
                 end
 

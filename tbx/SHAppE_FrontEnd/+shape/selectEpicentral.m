@@ -65,7 +65,7 @@ classdef selectEpicentral < shape.SHAPEComponent
             geobasemap(obj.GeoAxes, obj.BaseMaps(1))
             ControlPanel = uipanel(obj.MainGrid);
             ControlGrid = uigridlayout(ControlPanel, [6, 1], ...
-                "RowHeight", {"fit", "fit", 10, "fit", "fit", "fit"});
+                "RowHeight", {"fit", "fit", 10, "fit", "fit", "fit"}); 
 
             % Dropdown to select basemap
             uilabel(ControlGrid, "Text", "Select base map style");
@@ -83,6 +83,9 @@ classdef selectEpicentral < shape.SHAPEComponent
             obj.GeoScatter = geoscatter(obj.GeoAxes, ...
                 NaN, NaN, "filled");
             obj.GeoScatter.SizeData = 12;
+
+            % Manually set geoaxes interactions
+            obj.GeoAxes.Interactions = [dataTipInteraction, panInteraction, zoomInteraction];
 
             % Create polygon ROI
             obj.InitilaizeROI;
