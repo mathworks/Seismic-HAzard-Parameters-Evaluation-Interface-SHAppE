@@ -13,11 +13,6 @@ classdef ViewResults < shape.SHAPEComponent
         ScaleDropDown
     end
 
-    properties (Constant)
-        LeftColour = "k";
-        RightColour = [0.8510, 0.3255, 0.0980]; % Orange
-    end
-
     properties
         AnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
         ResultsCleared (:, 1) event.listener {mustBeScalarOrEmpty}
@@ -137,21 +132,19 @@ classdef ViewResults < shape.SHAPEComponent
             % Tile 1
             yyaxis(obj.Axis1, "left")
             plot(obj.Axis1, obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.MRP, ...
-                "color", obj.LeftColour)
+                obj.ShapeData.ResultsTable.MRP)
 
             % If CI values exist add to the plot
             if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
                 plot(obj.Axis1, obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 1), ...
                     obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 2), ...
-                    "color", obj.LeftColour, "LineStyle", ":", "Marker","none")
+                    "LineStyle", ":", "Marker","none")
             end
 
             if obj.ShapeData.HavePressureData
                 yyaxis(obj.Axis1, "right")
                 plot(obj.Axis1, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure, ...
-                    "color", obj.RightColour)
+                    obj.ShapeData.FilteredData.Pressure)
             else
                 obj.Axis1.YAxis(2).Visible = "off";
             end
@@ -159,21 +152,19 @@ classdef ViewResults < shape.SHAPEComponent
             % Tile 2
             yyaxis(obj.Axis2, "left")
             plot(obj.Axis2, obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.EP, ...
-                "color", obj.LeftColour)
+                obj.ShapeData.ResultsTable.EP)
 
             % If CI values exist add to the plot
             if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
                 plot(obj.Axis2, obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 1), ...
                     obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 2), ...
-                    "color", obj.LeftColour, "LineStyle", ":", "Marker","none")
+                    "LineStyle", ":", "Marker","none")
             end
 
             if obj.ShapeData.HavePressureData
                 yyaxis(obj.Axis2, "right")
                 plot(obj.Axis2, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure, ...
-                    "color", obj.RightColour)
+                    obj.ShapeData.FilteredData.Pressure)
             else
                 obj.Axis2.YAxis(2).Visible = "off";
             end
@@ -181,21 +172,19 @@ classdef ViewResults < shape.SHAPEComponent
             % Tile 3
             yyaxis(obj.Axis3, "left")
             plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.EventsPerDay, ...
-                "color", obj.LeftColour)
+                obj.ShapeData.ResultsTable.EventsPerDay)
 
             yyaxis(obj.Axis3, "right")
             % If B values exist add to the plot
             if any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all")
                 plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, ...
-                    obj.ShapeData.ResultsTable.B_values, ...
-                    "color", obj.RightColour)
+                    obj.ShapeData.ResultsTable.B_values)
 
                 % If CI values exist add to the plot
                 if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
                     plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 1), ...
                         obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 2), ...
-                        "color", obj.RightColour, "LineStyle", ":", "Marker","none")
+                        "LineStyle", ":", "Marker","none")
                 end
 
             else
@@ -224,7 +213,7 @@ classdef ViewResults < shape.SHAPEComponent
             for k = 1:numWindows
                 x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                 y = repmat(obj.ShapeData.ResultsTable.MRP(k), 1, 2);
-                plot(obj.Axis1, x, y, "color", obj.LeftColour, "LineStyle", "-", "Marker","none")
+                plot(obj.Axis1, x, y, "LineStyle", "-", "Marker","none")
             end
 
             % If CI values exist add to the plot
@@ -234,14 +223,14 @@ classdef ViewResults < shape.SHAPEComponent
                     y_lower = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 1), 1, 2);
                     y_upper = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 2), 1, 2);
                     plot(obj.Axis1, x, y_lower, x, y_upper, ...
-                        "color", obj.LeftColour, "LineStyle", ":", "Marker","none")
+                        "LineStyle", ":", "Marker","none")
                 end
             end
 
             if obj.ShapeData.HavePressureData
                 yyaxis(obj.Axis1, "right")
                 plot(obj.Axis1, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure, "color", obj.RightColour)
+                    obj.ShapeData.FilteredData.Pressure)
             else
                 obj.Axis1.YAxis(2).Visible = "off";
             end
@@ -251,7 +240,7 @@ classdef ViewResults < shape.SHAPEComponent
             for k = 1:numWindows
                 x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                 y = repmat(obj.ShapeData.ResultsTable.EP(k), 1, 2);
-                plot(obj.Axis2, x, y, "color", obj.LeftColour, "LineStyle", "-", "Marker","none")
+                plot(obj.Axis2, x, y, "LineStyle", "-", "Marker","none")
             end
 
             % If CI values exist add to the plot
@@ -261,14 +250,14 @@ classdef ViewResults < shape.SHAPEComponent
                     y_lower = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 1), 1, 2);
                     y_upper = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 2), 1, 2);
                     plot(obj.Axis2, x, y_lower, x, y_upper, ...
-                        "color", obj.LeftColour, "LineStyle", ":", "Marker","none")
+                        "LineStyle", ":", "Marker","none")
                 end
             end
 
             if obj.ShapeData.HavePressureData
                 yyaxis(obj.Axis2, "right")
                 plot(obj.Axis2, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure,  "color", obj.RightColour)
+                    obj.ShapeData.FilteredData.Pressure)
             else
                 obj.Axis2.YAxis(2).Visible = "off";
             end
@@ -278,7 +267,7 @@ classdef ViewResults < shape.SHAPEComponent
             for k = 1:numWindows
                 x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                 y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
-                plot(obj.Axis3, x, y, "color", obj.LeftColour, "LineStyle", "-", "Marker","none")
+                plot(obj.Axis3, x, y, "LineStyle", "-", "Marker","none")
             end
 
             yyaxis(obj.Axis3, "right")
@@ -287,7 +276,7 @@ classdef ViewResults < shape.SHAPEComponent
                 for k = 1:numWindows
                     x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                     y = repmat(obj.ShapeData.ResultsTable.B_values(k), 1, 2);
-                    plot(obj.Axis3, x, y, "color", obj.RightColour, "LineStyle", "-", "Marker","none")
+                    plot(obj.Axis3, x, y, "LineStyle", "-", "Marker","none")
                 end
 
                 % If CI values exist add to the plot
@@ -297,7 +286,7 @@ classdef ViewResults < shape.SHAPEComponent
                         y_lower = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 1), 1, 2);
                         y_upper = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 2), 1, 2);
                         plot(obj.Axis3, x, y_lower, x, y_upper, ...
-                            "color", obj.RightColour, "LineStyle", ":", "Marker","none")
+                            "LineStyle", ":", "Marker","none")
                     end
                 end
             else
@@ -326,12 +315,10 @@ classdef ViewResults < shape.SHAPEComponent
                 obj.ShapeData.TargetMagnitude)
 
             yyaxis(obj.Axis1, "left")
-            obj.Axis1.YAxis(1).Color = obj.LeftColour;
             ylabel(obj.Axis1, string(obj.ShapeData.SelectedTimeUnit))
 
             if obj.ShapeData.HavePressureData
                 yyaxis(obj.Axis1, "right")
-                obj.Axis1.YAxis(2).Color = obj.RightColour;
                 ylabel(obj.Axis1, "Pressure")
             end
 
@@ -343,12 +330,10 @@ classdef ViewResults < shape.SHAPEComponent
                 obj.ShapeData.SelectedTimeUnit + " period")
 
             yyaxis(obj.Axis2, "left")
-            obj.Axis2.YAxis(1).Color = obj.LeftColour;
             ylabel(obj.Axis2, "Probability")
 
             if obj.ShapeData.HavePressureData
                 yyaxis(obj.Axis2, "right")
-                obj.Axis2.YAxis(2).Color = obj.RightColour;
                 ylabel(obj.Axis2, "Pressure")
             end
 
@@ -357,11 +342,9 @@ classdef ViewResults < shape.SHAPEComponent
             title(obj.Axis3, "Activity Rate")
 
             yyaxis(obj.Axis3, "left")
-            obj.Axis3.YAxis(1).Color = obj.LeftColour;
             ylabel(obj.Axis3, "Events/day")
 
             yyaxis(obj.Axis3, "right")
-            obj.Axis3.YAxis(2).Color = obj.RightColour;
             ylabel(obj.Axis3, "b-value")
 
             % Global setting for all axes
