@@ -1,0 +1,15 @@
+{
+    "ToolboxName":"SHAppE",
+    "Identifier":"31de8503-f486-4a72-966a-2ddadd7e9783",
+    "Summary":"SHAppE facilitates probabilistic assessment of time dependent seismic hazard parameters.",
+    "Description":"SHAppE is an interactive MATLAB app designed for time-dependent seismic hazard analysis. It extends the capabilities of the existing SHAPE toolbox (Leptokaropoulos and Lasocki, 2020), improving usability through an intuitive graphical interface. SHAppE allows users to explore datasets interactively and evaluate probabilistic changes in seismic hazard parameters, such as mean return periods (MRP) and exceedance probabilities (EP), along with their confidence intervals. SHAppE also produces output figures and reports. Each report documents the specific combination of methods, selected data, and parameter values used in the analysis. This ensures better traceability and simplifies reproducibility for future studies.",
+    "AuthorCompany":"MathWorks",
+    "AuthorName":"Andrew Redfearn",
+    "AuthorEmail":"aredfear@mathworks.com",
+    "ToolboxFolder":"./tbx",
+    "ToolboxMatlabPath": ["./tbx", "./tbx/doc", "./tbx/shappe", "./tbx/shappe/SHAppE_FrontEnd"],
+    "ToolboxImageFile":"./tbx/SHAppE_Logo.png",
+    "ToolboxGettingStartedGuide":"./tbx/doc/GettingStartedWithSHAppE.mlx",
+    "MinimumMatlabRelease":"R2024a"
+}
+ 

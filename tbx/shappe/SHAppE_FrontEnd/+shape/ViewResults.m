@@ -100,12 +100,12 @@ classdef ViewResults < shape.SHAPEComponent
                 % Update table
                 obj.DisplayTable.Data = obj.ShapeData.ResultsTable;
 
-                % redraw chart based on if windows overlap
-                if obj.ShapeData.WindowsOverlap
-                    obj.CreateChart_Overlap();
-                else
+                % redraw chart based on number of windows and if they overlap
+                if (obj.ShapeData.NumWindows < 50) && ~obj.ShapeData.WindowsOverlap
                     obj.CreateChart_NoOverlap();
-                end % if obj.ShapeData.WindowsOverlap
+                else
+                    obj.CreateChart_Overlap();
+                end
 
             end % if ~isempty(obj.ShapeData.ResultsTable)
 
