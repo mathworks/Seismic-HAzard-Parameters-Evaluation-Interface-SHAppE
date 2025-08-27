@@ -169,7 +169,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         end
 
-        function update(obj, ~, ~)
+        function update(~, ~, ~)
 
             % This method is run whenever a public property is changed
             

@@ -84,7 +84,7 @@ classdef ViewResults < shape.SHAPEComponent
 
         end % setup
 
-        function update(obj, ~, ~)
+        function update(~, ~, ~)
 
         end % update
 

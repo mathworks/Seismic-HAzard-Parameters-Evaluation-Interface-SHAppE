@@ -192,30 +192,32 @@ classdef selectDepthRange < shape.SHAPEComponent
 
         end % onUndoButtonPushed
 
-        function movingCurser(~, ~)
-
-            xPos = num2ruler( ax.CurrentPoint(1, 1), ax.XAxis );
-
-            if xPos >= d(1) && xPos <= d(end)
-                xl.Value = xPos;
-                xl.Label = string(xl.Value);
-
-                % set label position
-                if xPos <= midDate
-                    xl.LabelHorizontalAlignment = "right";
-                else
-                    xl.LabelHorizontalAlignment = "left";
-                end
-
-                % Calculate marker y position
-                yPos = interp1(d, y, xPos, "linear");
-
-                % Set marker position
-                set(marker, "XData", xPos, "YData", yPos)
-
-            end
-
-        end % function movingCurser(~, ~)
+        % Moving curser placeholder, this will not work, the code is just
+        % here in case we add this in the future
+        % function movingCurser(~, ~)
+        % 
+        %     xPos = num2ruler( ax.CurrentPoint(1, 1), ax.XAxis );
+        % 
+        %     if xPos >= d(1) && xPos <= d(end)
+        %         xl.Value = xPos;
+        %         xl.Label = string(xl.Value);
+        % 
+        %         % set label position
+        %         if xPos <= midDate
+        %             xl.LabelHorizontalAlignment = "right";
+        %         else
+        %             xl.LabelHorizontalAlignment = "left";
+        %         end
+        % 
+        %         % Calculate marker y position
+        %         yPos = interp1(d, y, xPos, "linear");
+        % 
+        %         % Set marker position
+        %         set(marker, "XData", xPos, "YData", yPos)
+        % 
+        %     end
+        % 
+        % end % function movingCurser(~, ~)
 
     end % Methods callbacks
 
