@@ -7,9 +7,9 @@
     "AuthorName":"Andrew Redfearn",
     "AuthorEmail":"aredfear@mathworks.com",
     "ToolboxFolder":"./tbx",
-    "ToolboxMatlabPath": ["./tbx", "./tbx/doc", "./tbx/shappe", "./tbx/shappe/SHAppE_FrontEnd"],
+    "ToolboxMatlabPath": ["./tbx", "./tbx/doc", "./tbx/shappe", "./tbx/shappe/SHAppE_FrontEnd", "./tbx/data"],
     "ToolboxImageFile":"./tbx/SHAppE_Logo.png",
     "ToolboxGettingStartedGuide":"./tbx/doc/GettingStartedWithSHAppE.mlx",
-    "MinimumMatlabRelease":"R2024a"
+    "MinimumMatlabRelease":"R2025a"
 }
  
