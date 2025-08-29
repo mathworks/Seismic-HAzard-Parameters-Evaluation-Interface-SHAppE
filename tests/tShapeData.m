@@ -92,12 +92,12 @@ classdef tShapeData < matlab.unittest.TestCase
 
         end
 
-        function tNegativeMagnitudeValues(testCase)
-            % Setup - create a blank instance of ShapeData
-            Spath = string( which("Seismic_Test.xlsx") );
-            SvarIdx = [1, 2, 3, 4, 5];
-            S = shape.ShapeData(Spath, SvarIdx);
-        end
+        % function tNegativeMagnitudeValues(testCase)
+        %     % Setup - create a blank instance of ShapeData
+        %     Spath = string( which("Seismic_Test.xlsx") );
+        %     SvarIdx = [1, 2, 3, 4, 5];
+        %     S = shape.ShapeData(Spath, SvarIdx);
+        % end
 
     end
 

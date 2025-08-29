@@ -71,7 +71,7 @@ assert( all( passed ), "buildfile:ProjectIssue", ...
 end % checkTask
 
 function packageTask( context )
-% Package the Chart Development Toolbox.
+% Package the SHAppE Toolbox.
 
 % Project root directory.
 projectRoot = context.Plan.RootFolder;
