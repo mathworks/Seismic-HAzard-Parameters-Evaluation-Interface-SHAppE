@@ -21,11 +21,14 @@ end
 
 function checkSHAPEFunctions
 
-% Request location of installed additional software
-installedLocation = SHAppE.getInstallationLocation("SHAPE toolbox");
+try
+    % Request location of installed additional software
+    installedLocation = SHAppE.getInstallationLocation("SHAPE toolbox");
 
-% Add this to MATLAB path
-addpath( genpath(installedLocation) )
+    % Add this to MATLAB path
+    addpath( genpath(installedLocation) )
+catch
+end
 
 % Identify locations of the dist_GRT function
 % There are typically three, one for each version of SHAPE)

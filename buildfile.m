@@ -98,7 +98,7 @@ mltbx = fullfile( projectRoot, ...
     meta.ToolboxName + " " + versionString + ".mltbx" );
 meta.OutputFile = mltbx;
 
-% Additional software struct
+% Required additional software
 reqaddsoft = struct("Name", "SHAPE toolbox", ...
     "Platform", "win64", ...
     "DownloadURL", "https://epos-apps.grid.cyfronet.pl/tcs-ah/sera-applications/archive/master.zip", ...
@@ -107,6 +107,8 @@ reqaddsoft = repmat(reqaddsoft, 1, 3);
 reqaddsoft(2).Platform = "maci64";
 reqaddsoft(3).Platform = "glnxa64";
 meta.RequiredAdditionalSoftware = reqaddsoft;
+
+% Required toolboxes
 
 % Define the toolbox packaging options.
 toolboxFolder = meta.ToolboxFolder;
