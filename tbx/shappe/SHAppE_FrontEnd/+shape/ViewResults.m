@@ -10,7 +10,7 @@ classdef ViewResults < shape.SHAPEComponent
         Axis1 matlab.graphics.axis.Axes
         Axis2 matlab.graphics.axis.Axes
         Axis3 matlab.graphics.axis.Axes
-        ScaleDropDown
+        ScaleDropDown matlab.ui.control.DropDown
     end
 
     properties
@@ -80,7 +80,11 @@ classdef ViewResults < shape.SHAPEComponent
             % Linear / Log dropdown menu
             obj.ScaleDropDown = uidropdown(buttonGrid, ...
                 "Items", ["linear", "log"], ...
-                "ValueChangedFcn", @obj.ChangeAxisScale);
+                "ValueChangedFcn", @obj.ChangeAxisScale, ...
+                "Value", "log");
+
+            % Set up tiled layout and annotations
+            obj.InitialiseCharts()
 
         end % setup
 
@@ -117,14 +121,14 @@ classdef ViewResults < shape.SHAPEComponent
             obj.DisplayTable.Data = obj.ShapeData.ResultsTable;
 
             % Clear chart
-            obj.ChartSetup()
+            obj.setupCharts()
 
         end
 
         function CreateChart_Overlap(obj)
 
             % Set up tiled layout and annotations
-            obj.ChartSetup()
+            obj.setupCharts()
 
             % Stop plot function changing axis properties
             hold([obj.Axis1, obj.Axis2, obj.Axis3], "on")
@@ -199,7 +203,7 @@ classdef ViewResults < shape.SHAPEComponent
         function CreateChart_NoOverlap(obj)
 
             % Set up tiled layout and annotations
-            obj.ChartSetup()
+            obj.setupCharts()
 
             % Save number of windows for for loops
             numWindows = obj.ShapeData.NumWindows;
@@ -304,13 +308,32 @@ classdef ViewResults < shape.SHAPEComponent
 
         end % function CreateChart_NoOverlap(obj)
 
-        function ChartSetup(obj)
+        function InitialiseCharts(obj)
 
             % Tiledlayout
             obj.TiledLayout = tiledlayout(obj.ChartTab, 3, 1);
 
             % Tile 1
             obj.Axis1 = nexttile(obj.TiledLayout);
+
+            % Tile 2
+            obj.Axis2 = nexttile(obj.TiledLayout);
+
+            % Tile 3
+            obj.Axis3 = nexttile(obj.TiledLayout);
+
+            % Global setting for all axes
+            axis([obj.Axis1, obj.Axis2, obj.Axis3], "padded")
+            grid([obj.Axis1, obj.Axis2, obj.Axis3], "on")
+
+            % Sync axis with drop down
+            obj.ChangeAxisScale()
+
+        end
+
+        function setupCharts(obj)
+
+            % Tile 1
             title(obj.Axis1, "Mean Return Period for M >= " + ...
                 obj.ShapeData.TargetMagnitude)
 
@@ -323,7 +346,6 @@ classdef ViewResults < shape.SHAPEComponent
             end
 
             % Tile 2
-            obj.Axis2 = nexttile(obj.TiledLayout);
             title(obj.Axis2, "Exceedance Probability for M >= " + ...
                 obj.ShapeData.TargetMagnitude + " within " + ...
                 obj.ShapeData.TargetPeriodLength + " " + ...
@@ -338,7 +360,6 @@ classdef ViewResults < shape.SHAPEComponent
             end
 
             % Tile 3
-            obj.Axis3 = nexttile(obj.TiledLayout);
             title(obj.Axis3, "Activity Rate")
 
             yyaxis(obj.Axis3, "left")
@@ -347,12 +368,8 @@ classdef ViewResults < shape.SHAPEComponent
             yyaxis(obj.Axis3, "right")
             ylabel(obj.Axis3, "b-value")
 
-            % Global setting for all axes
-            axis([obj.Axis1, obj.Axis2, obj.Axis3], "padded")
-            grid([obj.Axis1, obj.Axis2, obj.Axis3], "on")
-
-            % Make sure axis of tile 1 matches the dropdown
-            % obj.ChangeAxisScale() % this causes an error
+            % Sync axis with drop down
+            obj.ChangeAxisScale()
 
         end
 

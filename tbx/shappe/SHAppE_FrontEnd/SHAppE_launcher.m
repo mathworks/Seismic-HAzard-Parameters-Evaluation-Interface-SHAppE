@@ -56,7 +56,10 @@ else
         functionsToUse = functionsToUse(1);
 
         % Remove root folder and subfolders from MATLAB path
-        rmpath( genpath(installedLocation) )
+        try
+            rmpath( genpath(installedLocation) )
+        catch
+        end
 
         % Re-add only the required folder
         addpath(functionsToUse)
