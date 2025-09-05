@@ -128,6 +128,7 @@ classdef ViewResults < shape.SHAPEComponent
         function CreateChart_Overlap(obj)
 
             % Set up tiled layout and annotations
+            obj.InitialiseCharts()
             obj.setupCharts()
 
             % Stop plot function changing axis properties
@@ -174,13 +175,28 @@ classdef ViewResults < shape.SHAPEComponent
             end
 
             % Tile 3
-            yyaxis(obj.Axis3, "left")
+
+            % Check if b values exist
+            bValsExist = any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all");
+
+            % Work on right if B values exist
+            if bValsExist
+                yyaxis(obj.Axis3, "right")
+            else
+                yyaxis(obj.Axis3, "left")
+                obj.Axis3.YAxis(2).Visible = "off";
+            end
+
+            % Plot events per day
+            ylabel(obj.Axis3, "Events/day")
             plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, ...
                 obj.ShapeData.ResultsTable.EventsPerDay)
 
-            yyaxis(obj.Axis3, "right")
+            
             % If B values exist add to the plot
-            if any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all")
+            if bValsExist
+                yyaxis(obj.Axis3, "left")
+                ylabel(obj.Axis3, "b-value")
                 plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, ...
                     obj.ShapeData.ResultsTable.B_values)
 
@@ -191,10 +207,7 @@ classdef ViewResults < shape.SHAPEComponent
                         "LineStyle", ":", "Marker","none")
                 end
 
-            else
-                % If there are no b values, turn off the axis
-                obj.Axis3.YAxis(2).Visible = "off";
-            end
+            end % if bValsExist
 
             hold([obj.Axis1, obj.Axis2, obj.Axis3], "off")
 
@@ -203,6 +216,7 @@ classdef ViewResults < shape.SHAPEComponent
         function CreateChart_NoOverlap(obj)
 
             % Set up tiled layout and annotations
+            obj.InitialiseCharts()
             obj.setupCharts()
 
             % Save number of windows for for loops
@@ -267,16 +281,30 @@ classdef ViewResults < shape.SHAPEComponent
             end
 
             % Tile 3
-            yyaxis(obj.Axis3, "left")
+
+            % Check if b values exist
+            bValsExist = any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all");
+
+            % Work on right if B values exist
+            if bValsExist
+                yyaxis(obj.Axis3, "right")
+            else
+                yyaxis(obj.Axis3, "left")
+                obj.Axis3.YAxis(2).Visible = "off";
+            end
+    
+            % Plot events per day
+            ylabel(obj.Axis3, "Events/day")
             for k = 1:numWindows
                 x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                 y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
                 plot(obj.Axis3, x, y, "LineStyle", "-", "Marker","none")
             end
 
-            yyaxis(obj.Axis3, "right")
             % If B values exist add to the plot
-            if any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all")
+            if bValsExist
+                yyaxis(obj.Axis3, "left")
+                ylabel(obj.Axis3, "b-value")
                 for k = 1:numWindows
                     x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                     y = repmat(obj.ShapeData.ResultsTable.B_values(k), 1, 2);
@@ -292,11 +320,8 @@ classdef ViewResults < shape.SHAPEComponent
                         plot(obj.Axis3, x, y_lower, x, y_upper, ...
                             "LineStyle", ":", "Marker","none")
                     end
-                end
-            else
-                % If there are no b values, turn off the axis
-                obj.Axis3.YAxis(2).Visible = "off";
-            end
+                end                
+            end % if bValsExist
 
             % Some global setting for all axes
             xt = unique( sort( obj.ShapeData.ResultsTable.TimeRange(:) ) );
@@ -361,12 +386,6 @@ classdef ViewResults < shape.SHAPEComponent
 
             % Tile 3
             title(obj.Axis3, "Activity Rate")
-
-            yyaxis(obj.Axis3, "left")
-            ylabel(obj.Axis3, "Events/day")
-
-            yyaxis(obj.Axis3, "right")
-            ylabel(obj.Axis3, "b-value")
 
             % Sync axis with drop down
             obj.ChangeAxisScale()
