@@ -8,7 +8,7 @@ classdef selectWindows < shape.SHAPEComponent
         Axes matlab.graphics.axis.Axes
         TablePanel matlab.ui.container.Panel
         DisplayTable matlab.ui.control.Table
-        ChartData
+        GraphicalChart
         Xline matlab.graphics.chart.decoration.ConstantLine
         Marker matlab.graphics.primitive.Line
         XlineClicked matlab.graphics.chart.decoration.ConstantLine
@@ -21,6 +21,7 @@ classdef selectWindows < shape.SHAPEComponent
         FileGrid matlab.ui.container.GridLayout
         GraphicalTab matlab.ui.container.Tab
         YAxisDataDropDown matlab.ui.control.DropDown
+        StyleDropdown matlab.ui.control.DropDown
         YAxisDataLabel
         TimeWindowSize
         TimeStepSize
@@ -140,22 +141,33 @@ classdef selectWindows < shape.SHAPEComponent
             obj.Axes = axes(mainGraphicalGrid);
             obj.DisplayTable = uitable(mainGraphicalGrid);
 
-            % Graphical - Buttons
-            graphicalButtonGrid = uigridlayout(mainGraphicalGrid, [1, 5], ...
-                "RowHeight", "fit", "ColumnWidth", {120, 100, 100, 100, "1x"});
-            graphicalButtonGrid.Layout.Column = [1, 2];
-            obj.YAxisDataLabel = uilabel(graphicalButtonGrid, "Text", "Chosen Y Axis Data");
-            obj.YAxisDataDropDown = uidropdown(graphicalButtonGrid, ...
+            % Chart options
+            chartOptionsGrid = uigridlayout(mainGraphicalGrid, ...
+                "RowHeight", ["fit", "fit"], "ColumnWidth", ["fit", "fit"]);
+
+            uilabel(chartOptionsGrid, "Text", "Chosen Y Axis Data");            
+            obj.YAxisDataDropDown = uidropdown(chartOptionsGrid, ...
                 "ValueChangedFcn", @obj.onYAxisDropDownChanged, ...
                 "Items", string.empty(0, 1));
-            uibutton(graphicalButtonGrid, "Text", "Clear All", ...
+
+            uilabel(chartOptionsGrid, "Text", "Chart Style");
+            obj.StyleDropdown = uidropdown(chartOptionsGrid, ...
+                "ValueChangedFcn", @obj.StyleDropdownChanged, ...
+                "Items", ["Line", "Points"]);
+
+            % Clear buttons
+            clearOptionsGrid = uigridlayout(mainGraphicalGrid, [1, 2], ...
+                "RowHeight", "fit", "ColumnWidth", ["fit", "fit"]);
+            uibutton(clearOptionsGrid, "Text", "Clear All", ...
                 "ButtonPushedFcn", @obj.clearAllRegions);
-            uibutton(graphicalButtonGrid, "Text", "Clear Last", ...
+            uibutton(clearOptionsGrid, "Text", "Clear Last", ...
                 "ButtonPushedFcn", @obj.clearLastRegion);
+            
 
             % Create plot and then axes clicked callback
             % (Important for the callback to be set after plot)
-            obj.ChartData = plot(obj.Axes, NaT, NaN, "PickableParts","none");
+            obj.GraphicalChart = plot(obj.Axes, NaT, NaN, ...
+                "PickableParts","none");
 
             % Adjust axes (after plot function for safety)
             obj.Axes.ButtonDownFcn = @obj.mouseClicked;
@@ -194,6 +206,9 @@ classdef selectWindows < shape.SHAPEComponent
             obj.WindowsTable.Layout.Row = [1, 3];
             obj.WindowsTable.Layout.Column = 2;
 
+            % Set chart style
+            obj.StyleDropdownChanged()
+
         end
 
         function update(obj, ~, ~)
@@ -203,7 +218,7 @@ classdef selectWindows < shape.SHAPEComponent
 
                 % Add drop down items
                 obj.YAxisDataDropDown.Items = ...
-                    obj.ShapeData.FilteredData.Properties.VariableNames;
+                    obj.ShapeData.FilteredData.Properties.VariableNames([end, 1:end-1]);
 
                 % Run drop down callback
                 obj.onYAxisDropDownChanged()
@@ -334,7 +349,7 @@ classdef selectWindows < shape.SHAPEComponent
                 timeStampVarName = string( obj.ShapeData.FilteredData.Properties.DimensionNames(1) );
 
                 % Set data on chart
-                set(obj.ChartData, "XData", obj.ShapeData.FilteredData.(timeStampVarName), "YData", YData)
+                set(obj.GraphicalChart, "XData", obj.ShapeData.FilteredData.(timeStampVarName), "YData", YData)
 
                 % Set axis limits
                 obj.Axes.XLim = [min(obj.ShapeData.FilteredData.(timeStampVarName)), max(obj.ShapeData.FilteredData.(timeStampVarName))];
@@ -342,6 +357,17 @@ classdef selectWindows < shape.SHAPEComponent
 
             end
 
+        end
+
+        function StyleDropdownChanged(obj, ~, ~)
+
+            % Set chart style
+            switch obj.StyleDropdown.Value
+                case "Line"
+                    set(obj.GraphicalChart, "LineStyle", "-", "Marker", "none")
+                case "Points"
+                    set(obj.GraphicalChart, "LineStyle", "none", "Marker", ".")
+            end
         end
 
         function onBrowseButtonPressed(obj, ~, ~)
