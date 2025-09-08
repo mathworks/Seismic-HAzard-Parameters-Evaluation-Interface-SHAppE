@@ -10,7 +10,7 @@ classdef ShapeData < handle
 
     properties ( SetObservable )
         selectedDateRange (1, 2) datetime = [NaT, NaT]          % lower and upper time range
-        selectedEpicentralValues (:, 2) {mustBeNumeric, mustBeFinite, mustBePositive} % latitude and longitude values for each point of the epicentral ROI
+        selectedEpicentralValues (:, 2) {mustBeNumeric, mustBeFinite} % latitude and longitude values for each point of the epicentral ROI
         selectedDepthRange (1, 2) {mustBeNumeric} = [NaN, NaN]  % lower and upper depth limits
         selectedMagnitudeMinimum (1, 1) {mustBeNumeric} = NaN   % Magnitude lower limit
         WindowDates (:, 2) datetime = datetime.empty( 0, 2 )
