@@ -84,7 +84,7 @@ projectRoot = context.Plan.RootFolder;
 toolboxShortName = "shappe";
 
 % Import and tweak the toolbox metadata.
-toolboxJSON = fullfile( projectRoot, toolboxShortName + ".json" );
+toolboxJSON = fullfile( projectRoot, "SHAppE.json" );
 meta = jsondecode( fileread( toolboxJSON ) );
 meta.ToolboxMatlabPath = fullfile( projectRoot, meta.ToolboxMatlabPath );
 meta.ToolboxFolder = fullfile( projectRoot, meta.ToolboxFolder );
