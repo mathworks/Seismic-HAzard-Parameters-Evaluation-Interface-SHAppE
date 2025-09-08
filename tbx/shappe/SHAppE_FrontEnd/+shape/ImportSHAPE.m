@@ -108,10 +108,11 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 obj.VarColumnIdxSpinners(k).Layout.Column = [2, 3];
             end
 
-            num = [1, 2, 3, 5, 4];
-            for k = 1:5
-                obj.VarColumnIdxSpinners(k).Value = num(k);
-            end
+            % For testing with example files
+            % num = [1, 2, 3, 5, 4];
+            % for k = 1:5
+            %     obj.VarColumnIdxSpinners(k).Value = num(k);
+            % end
 
             % Production label
             prodLbl = uilabel(obj.ControlsGrid, ...
@@ -154,7 +155,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
             % Imported data panel
             importedPanel = uipanel(obj.MainGrid, ...
-                "Title", "Data Preview");
+                "Title", "Data Preview (First 20 rows)");
             importedPanel.Layout.Row = [1, 2];
             importedPanel.Layout.Column = 2;
 
