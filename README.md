@@ -2,6 +2,7 @@
 [![View Seismic-HAzard-Parameters-Evaluation-Interface-SHAppE on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/180879-shappe-seismic-hazard-parameters-evaluation-interface)
 
 # SHAppE: Seismic HAzard Parameters Evaluation App
+***WARNING**: SHAppE is compatible with MATLAB R2025a and newer. If you use an earlier MATLAB release, please select the [SHAppE version V1.0.0](https://github.com/mathworks/Seismic-HAzard-Parameters-Evaluation-Interface-SHAppE/releases/tag/v1.0.0)*
 
 SHAppE is an intuitive interface for time-dependent seismic hazard evaluation, designed to support both researchers and practitioners in natural and anthropogenic seismology.
 
