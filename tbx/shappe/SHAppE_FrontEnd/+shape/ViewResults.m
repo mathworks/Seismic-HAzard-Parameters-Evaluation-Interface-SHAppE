@@ -7,8 +7,7 @@ classdef ViewResults < shape.SHAPEComponent
         TableTab matlab.ui.container.Tab
         ChartTab matlab.ui.container.Tab
         TiledLayout matlab.graphics.layout.TiledChartLayout
-        Axis1 matlab.graphics.axis.Axes
-        Axis2 matlab.graphics.axis.Axes
+        Axes (3, 2) matlab.graphics.axis.Axes
         Axis3 matlab.graphics.axis.Axes
         ScaleDropDown matlab.ui.control.DropDown
     end
@@ -121,57 +120,58 @@ classdef ViewResults < shape.SHAPEComponent
             obj.DisplayTable.Data = obj.ShapeData.ResultsTable;
 
             % Clear chart
-            obj.setupCharts()
+            obj.InitialiseCharts()
 
         end
 
         function CreateChart_Overlap(obj)
 
-            % Set up tiled layout and annotations
-            obj.InitialiseCharts()
+            % Set dynamic annotations
             obj.setupCharts()
 
             % Stop plot function changing axis properties
-            hold([obj.Axis1, obj.Axis2, obj.Axis3], "on")
+            hold(obj.Axes, "on")
 
-            % Tile 1
-            yyaxis(obj.Axis1, "left")
-            plot(obj.Axis1, obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.MRP)
+            % Tile 1 - Left - Axes(1, 1)
+            plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                obj.ShapeData.ResultsTable.MRP, ...
+                "Color", "k")
 
             % If CI values exist add to the plot
             if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
-                plot(obj.Axis1, obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 1), ...
+                plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 1), ...
                     obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 2), ...
-                    "LineStyle", ":", "Marker","none")
+                    "LineStyle", ":", "Marker","none", "Color", "k")
             end
 
+            % Tile 1 - Right - Axes(1, 2)
             if obj.ShapeData.HavePressureData
-                yyaxis(obj.Axis1, "right")
-                plot(obj.Axis1, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure)
+                plot(obj.Axes(1, 2), obj.ShapeData.FilteredData.Time, ...
+                    obj.ShapeData.FilteredData.Pressure, ...
+                    "color", "b")
             else
-                obj.Axis1.YAxis(2).Visible = "off";
+                obj.Axes(1, 2).Visible = "off";
             end
 
-            % Tile 2
-            yyaxis(obj.Axis2, "left")
-            plot(obj.Axis2, obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.EP)
+            % Tile 2 - Left - Axes(2, 1)
+            plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                obj.ShapeData.ResultsTable.EP, ...
+                "Color", "k")
 
             % If CI values exist add to the plot
             if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
-                plot(obj.Axis2, obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 1), ...
+                plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 1), ...
                     obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 2), ...
-                    "LineStyle", ":", "Marker","none")
+                    "LineStyle", ":", "Marker","none", "Color", "k")
             end
 
+            % Tile 2 - Right - Axes(2, 2)
             if obj.ShapeData.HavePressureData
-                yyaxis(obj.Axis2, "right")
-                plot(obj.Axis2, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure)
+                plot(obj.Axes(2, 2), obj.ShapeData.FilteredData.Time, ...
+                    obj.ShapeData.FilteredData.Pressure, ...
+                    "color", "b")
             else
-                obj.Axis2.YAxis(2).Visible = "off";
+                obj.Axes(2, 2).Visible = "off";
             end
 
             % Tile 3
@@ -179,44 +179,50 @@ classdef ViewResults < shape.SHAPEComponent
             % Check if b values exist
             bValsExist = any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all");
 
-            % Work on right if B values exist
+            % If B values exist add 'B values' to Left axis - Axes(3, 1),
+            % and 'events per day' to right axis - Axes(3, 2)
             if bValsExist
-                yyaxis(obj.Axis3, "right")
-            else
-                yyaxis(obj.Axis3, "left")
-                obj.Axis3.YAxis(2).Visible = "off";
-            end
 
-            % Plot events per day
-            ylabel(obj.Axis3, "Events/day")
-            plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.EventsPerDay)
+                % Add b-values to left
+                ylabel(obj.Axes(3, 1), "b-value")
+                plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                    obj.ShapeData.ResultsTable.B_values, ...
+                    "color", "k")
 
-            
-            % If B values exist add to the plot
-            if bValsExist
-                yyaxis(obj.Axis3, "left")
-                ylabel(obj.Axis3, "b-value")
-                plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, ...
-                    obj.ShapeData.ResultsTable.B_values)
-
-                % If CI values exist add to the plot
+                % Also add CI values to left axis if they exist
                 if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
-                    plot(obj.Axis3, obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 1), ...
+                    plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 1), ...
                         obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 2), ...
-                        "LineStyle", ":", "Marker","none")
+                        "LineStyle", ":", "Marker","none", "color", "k")
                 end
 
-            end % if bValsExist
+                % Add 'events per day' to right axis - Axes(3, 2)
+                ylabel(obj.Axes(3, 2), "Events/day")
+                plot(obj.Axes(3, 2), obj.ShapeData.ResultsTable.TimeMid, ...
+                    obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
 
-            hold([obj.Axis1, obj.Axis2, obj.Axis3], "off")
+            else % If B values don't exist, add 'events per day' to left axis - Axes(3, 1), and hide right axis
+
+                % Plot events per day
+                ylabel(obj.Axes(3, 1), "Events/day")
+                plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                    obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
+
+                % Hide right axis
+                obj.Axes(3, 2).Visible = "off";
+                
+            end
+
+            % Global settings
+            set(obj.Axes(:, 2), "xtick", []) % This is required as xticks get turned back on when you plot with a datetime on the x
+            set(obj.Axes(:, 1), "XGrid", "on")
+            hold(obj.Axes, "off")
 
         end % CreateChart_Overlap(obj)
 
         function CreateChart_NoOverlap(obj)
 
-            % Set up tiled layout and annotations
-            obj.InitialiseCharts()
+            % Set dynamic annotations
             obj.setupCharts()
 
             % Save number of windows for for loops
@@ -224,14 +230,15 @@ classdef ViewResults < shape.SHAPEComponent
 
             % Stop plot function changing axis properties and allow
             % multiple lines
-            hold([obj.Axis1, obj.Axis2, obj.Axis3], "on")
+            hold(obj.Axes, "on")
 
-            % Tile 1
-            yyaxis(obj.Axis1, "left")
+            % Tile 1 - Left - Axes(1, 1)
             for k = 1:numWindows
                 x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                 y = repmat(obj.ShapeData.ResultsTable.MRP(k), 1, 2);
-                plot(obj.Axis1, x, y, "LineStyle", "-", "Marker","none")
+                plot(obj.Axes(1, 1), x, y, "LineStyle", "-", ...
+                    "Marker","none", ...
+                    "Color", "k")
             end
 
             % If CI values exist add to the plot
@@ -240,25 +247,27 @@ classdef ViewResults < shape.SHAPEComponent
                     x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                     y_lower = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 1), 1, 2);
                     y_upper = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 2), 1, 2);
-                    plot(obj.Axis1, x, y_lower, x, y_upper, ...
-                        "LineStyle", ":", "Marker","none")
+                    plot(obj.Axes(1, 1), x, y_lower, x, y_upper, ...
+                        "LineStyle", ":", "Marker","none", ...
+                        "Color", "k")
                 end
             end
 
+            % Tile 1 - Right - Axes(1, 2)
             if obj.ShapeData.HavePressureData
-                yyaxis(obj.Axis1, "right")
-                plot(obj.Axis1, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure)
+                plot(obj.Axes(1, 2), obj.ShapeData.FilteredData.Time, ...
+                    obj.ShapeData.FilteredData.Pressure, ...
+                    "Color", "b")
             else
-                obj.Axis1.YAxis(2).Visible = "off";
+                obj.Axes(1, 2).Visible = "off";
             end
 
-            % Tile 2
-            yyaxis(obj.Axis2, "left")
+            % Tile 2 - Left - Axes(2, 1)
             for k = 1:numWindows
                 x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                 y = repmat(obj.ShapeData.ResultsTable.EP(k), 1, 2);
-                plot(obj.Axis2, x, y, "LineStyle", "-", "Marker","none")
+                plot(obj.Axes(2, 1), x, y, "LineStyle", "-", "Marker","none", ...
+                    "Color", "k")
             end
 
             % If CI values exist add to the plot
@@ -267,17 +276,19 @@ classdef ViewResults < shape.SHAPEComponent
                     x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                     y_lower = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 1), 1, 2);
                     y_upper = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 2), 1, 2);
-                    plot(obj.Axis2, x, y_lower, x, y_upper, ...
-                        "LineStyle", ":", "Marker","none")
+                    plot(obj.Axes(2, 1), x, y_lower, x, y_upper, ...
+                        "LineStyle", ":", "Marker","none", ...
+                        "Color", "k")
                 end
             end
 
+            % Tile 2 - Right - Axes(2, 2)
             if obj.ShapeData.HavePressureData
-                yyaxis(obj.Axis2, "right")
-                plot(obj.Axis2, obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure)
+                plot(obj.Axes(2, 2), obj.ShapeData.FilteredData.Time, ...
+                    obj.ShapeData.FilteredData.Pressure, ...
+                    "Color", "b")
             else
-                obj.Axis2.YAxis(2).Visible = "off";
+                obj.Axes(2, 2).Visible = "off";
             end
 
             % Tile 3
@@ -285,51 +296,66 @@ classdef ViewResults < shape.SHAPEComponent
             % Check if b values exist
             bValsExist = any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all");
 
-            % Work on right if B values exist
+            % If B values exist add 'B values' to Left axis - Axes(3, 1),
+            % and 'events per day' to right axis - Axes(3, 2)
             if bValsExist
-                yyaxis(obj.Axis3, "right")
-            else
-                yyaxis(obj.Axis3, "left")
-                obj.Axis3.YAxis(2).Visible = "off";
-            end
-    
-            % Plot events per day
-            ylabel(obj.Axis3, "Events/day")
-            for k = 1:numWindows
-                x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
-                plot(obj.Axis3, x, y, "LineStyle", "-", "Marker","none")
-            end
 
-            % If B values exist add to the plot
-            if bValsExist
-                yyaxis(obj.Axis3, "left")
-                ylabel(obj.Axis3, "b-value")
+                % Add b-values to left
+                ylabel(obj.Axes(3, 1), "b-value")
                 for k = 1:numWindows
                     x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                     y = repmat(obj.ShapeData.ResultsTable.B_values(k), 1, 2);
-                    plot(obj.Axis3, x, y, "LineStyle", "-", "Marker","none")
+                    plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
+                        "Color", "k")
                 end
 
-                % If CI values exist add to the plot
+                % Also add CI values to left axis if they exist
                 if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
                     for k = 1:numWindows
                         x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                         y_lower = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 1), 1, 2);
                         y_upper = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 2), 1, 2);
-                        plot(obj.Axis3, x, y_lower, x, y_upper, ...
-                            "LineStyle", ":", "Marker","none")
+                        plot(obj.Axes(3, 1), x, y_lower, x, y_upper, ...
+                            "LineStyle", ":", "Marker","none", ...
+                            "Color", "k")
                     end
-                end                
+                end
+
+                % Add 'events per day' to right axis - Axes(3, 2)
+                ylabel(obj.Axes(3, 2), "Events/day")
+                for k = 1:numWindows
+                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                    y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
+                    plot(obj.Axes(3, 2), x, y, "LineStyle", "-", "Marker","none", ...
+                        "Color", "b")
+                end
+
+            else % If B values don't exist, add 'events per day' to left axis - Axes(3, 1), and hide right axis
+
+                % Add 'events per day' to left axis - Axes(3, 1)
+                ylabel(obj.Axes(3, 1), "Events/day")
+                for k = 1:numWindows
+                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                    y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
+                    plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
+                        "color", "k")
+                end
+
+                % Hide right axis
+                obj.Axes(3, 2).Visible = "off";
+                
             end % if bValsExist
 
             % Some global setting for all axes
             xt = unique( sort( obj.ShapeData.ResultsTable.TimeRange(:) ) );
             xt.Format = "dd/MM/uu";
-            xticks([obj.Axis1, obj.Axis2, obj.Axis3], xt)
-            xticklabels([obj.Axis1, obj.Axis2, obj.Axis3], string(xt))
+            set(obj.Axes(:, 2), "xtick", []) % This is required as xticks get turned back on when you plot with a datetime on the x
+            set(obj.Axes(:, 1), "xtick", xt)
+            xticklabels(obj.Axes(:, 1), string(xt))
+            set(obj.Axes(:, 1), "XGrid", "on")
+            set(obj.Axes(:, 1), "XTickLabelRotation", 45)
 
-            hold([obj.Axis1, obj.Axis2, obj.Axis3], "off")
+            hold(obj.Axes, "off")
 
         end % function CreateChart_NoOverlap(obj)
 
@@ -339,62 +365,51 @@ classdef ViewResults < shape.SHAPEComponent
             obj.TiledLayout = tiledlayout(obj.ChartTab, 3, 1);
 
             % Tile 1
-            obj.Axis1 = nexttile(obj.TiledLayout);
+            obj.Axes(1, :) = obj.createDoubleAxes(obj.TiledLayout, 1);
 
             % Tile 2
-            obj.Axis2 = nexttile(obj.TiledLayout);
+            obj.Axes(2, :) = obj.createDoubleAxes(obj.TiledLayout, 2);
 
             % Tile 3
-            obj.Axis3 = nexttile(obj.TiledLayout);
-
-            % Global setting for all axes
-            axis([obj.Axis1, obj.Axis2, obj.Axis3], "padded")
-            grid([obj.Axis1, obj.Axis2, obj.Axis3], "on")
-
-            % Sync axis with drop down
-            obj.ChangeAxisScale()
+            obj.Axes(3, :) = obj.createDoubleAxes(obj.TiledLayout, 3);
 
         end
 
         function setupCharts(obj)
 
             % Tile 1
-            title(obj.Axis1, "Mean Return Period for M >= " + ...
+            title(obj.Axes(1, 1), "Mean Return Period for M >= " + ...
                 obj.ShapeData.TargetMagnitude)
 
-            yyaxis(obj.Axis1, "left")
-            ylabel(obj.Axis1, string(obj.ShapeData.SelectedTimeUnit))
+            ylabel(obj.Axes(1, 1), string(obj.ShapeData.SelectedTimeUnit))
 
             if obj.ShapeData.HavePressureData
-                yyaxis(obj.Axis1, "right")
-                ylabel(obj.Axis1, "Pressure")
+                ylabel(obj.Axes(1, 2), "Pressure")
             end
 
             % Tile 2
-            title(obj.Axis2, "Exceedance Probability for M >= " + ...
+            title(obj.Axes(2, 1), "Exceedance Probability for M >= " + ...
                 obj.ShapeData.TargetMagnitude + " within " + ...
                 obj.ShapeData.TargetPeriodLength + " " + ...
                 obj.ShapeData.SelectedTimeUnit + " period")
 
-            yyaxis(obj.Axis2, "left")
-            ylabel(obj.Axis2, "Probability")
+            ylabel(obj.Axes(2, 1), "Probability")
 
             if obj.ShapeData.HavePressureData
-                yyaxis(obj.Axis2, "right")
-                ylabel(obj.Axis2, "Pressure")
+                ylabel(obj.Axes(2, 2), "Pressure")
             end
 
             % Tile 3
-            title(obj.Axis3, "Activity Rate")
+            title(obj.Axes(3, 1), "Activity Rate")
 
             % Sync axis with drop down
-            obj.ChangeAxisScale()
+            % obj.ChangeAxisScale()
 
         end
 
         function ChangeAxisScale(obj, ~, ~)
 
-            obj.Axis1.YAxis(1).Scale = obj.ScaleDropDown.Value;
+            % obj.Axis1.YAxis(1).Scale = obj.ScaleDropDown.Value;
 
         end
 
@@ -420,5 +435,40 @@ classdef ViewResults < shape.SHAPEComponent
         end
 
     end % methods
+
+    methods (Static)
+
+        function Axes = createDoubleAxes(tLayout, tileNum)
+
+            % Create axes as array
+            Axes = axes("Parent", tLayout);
+            Axes(2) = axes("Parent", tLayout);
+
+            % Place both axes in same tile
+            Axes(1).Layout.Tile = tileNum;
+            Axes(2).Layout.Tile = tileNum;
+
+            % Set right axis properties
+            set(Axes(2), ...
+                "YAxisLocation", "right", ...
+                "Color", "none", ...
+                "Box", "off");
+
+            % Hide duplicate x-ticks on the top axes if you don"t want them
+            Axes(2).XTick = [];
+
+            % Set right y axis colour
+            Axes(2).YAxis.Color = "b";
+
+            % Link the x-axes so panning/zooming is shared
+            linkaxes(Axes, "x");
+
+            % Create placeholder graphics for data
+            % data = line(NaN, NaN, "Parent", ax(1));
+            % data(2) = line(NaN, NaN, "Parent", ax(2));
+
+        end % function [ax, data] = createDoubleAxes(tLayout, tileNum)
+
+    end % methods (Abstract)
 
 end % classdef

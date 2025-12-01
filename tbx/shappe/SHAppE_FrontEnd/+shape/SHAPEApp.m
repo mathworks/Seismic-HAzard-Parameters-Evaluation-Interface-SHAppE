@@ -203,10 +203,10 @@ classdef SHAPEApp < handle
         function onTabChanged(obj, ~, e)
             
             % If selected tab is "Off" (Disabled)
-            if string( e.NewValue.UserData ) ~= "On"
-                % Go back to previous tab
-                obj.MainTabGroup.SelectedTab = e.OldValue;
-            end
+            % if string( e.NewValue.UserData ) ~= "On"
+            %     % Go back to previous tab
+            %     obj.MainTabGroup.SelectedTab = e.OldValue;
+            % end
 
             % Set mouseovercallback if appropriate
             if (obj.MainTabGroup.SelectedTab == obj.FilterTab) && ...
@@ -238,20 +238,20 @@ classdef SHAPEApp < handle
 
                 if selection == "OK"
 
-                        % Clear results data in model (this triggers a
-                        % results tab listener)
-                        obj.ShapeData.ClearResults()
+                    % Switch to selected tab
+                    obj.MainTabGroup.SelectedTab = e.NewValue;
 
-                        % "Turn off" results tab
-                        switch obj.Figure.Theme.Name
-                            case "Light Theme"
-                                set(obj.ToggleTabs(4), "UserData", "Off", "ForegroundColor", 0.8*ones(1, 3))
-                            case "Dark Theme"
-                                set(obj.ToggleTabs(4), "UserData", "Off", "ForegroundColor", 0.45*ones(1, 3))
-                        end
+                    % "Turn off" results tab
+                    switch obj.Figure.Theme.Name
+                        case "Light Theme"
+                            set(obj.ToggleTabs(4), "UserData", "Off", "ForegroundColor", 0.8*ones(1, 3))
+                        case "Dark Theme"
+                            set(obj.ToggleTabs(4), "UserData", "Off", "ForegroundColor", 0.45*ones(1, 3))
+                    end
 
-                        % Switch to selected tab
-                        obj.MainTabGroup.SelectedTab = e.NewValue;
+                    % Clear results data in model (this triggers a
+                    % results tab listener)
+                    obj.ShapeData.ClearResults()
 
                 end % if selection == "OK"
 
@@ -270,7 +270,7 @@ classdef SHAPEApp < handle
                 end
             end
 
-        end % onMainTabChanged
+        end % onTabChanged
 
         function MouseHoverCallback(obj, ~, ~)
 
