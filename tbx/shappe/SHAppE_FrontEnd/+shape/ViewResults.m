@@ -104,11 +104,12 @@ classdef ViewResults < shape.SHAPEComponent
                 obj.DisplayTable.Data = obj.ShapeData.ResultsTable;
 
                 % redraw chart based on number of windows and if they overlap
-                if (obj.ShapeData.NumWindows < 50) && ~obj.ShapeData.WindowsOverlap
-                    obj.CreateChart_NoOverlap();
-                else
-                    obj.CreateChart_Overlap();
-                end
+                % if (obj.ShapeData.NumWindows < 50) && ~obj.ShapeData.WindowsOverlap
+                %     obj.CreateChart_NoOverlap();
+                % else
+                %     obj.CreateChart_Overlap();
+                % end
+                obj.CreateChart()
 
             end % if ~isempty(obj.ShapeData.ResultsTable)
 
@@ -124,103 +125,14 @@ classdef ViewResults < shape.SHAPEComponent
 
         end
 
-        function CreateChart_Overlap(obj)
+        function CreateChart(obj)
 
-            % Set dynamic annotations
-            obj.setupCharts()
-
-            % Stop plot function changing axis properties
-            hold(obj.Axes, "on")
-
-            % Tile 1 - Left - Axes(1, 1)
-            plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.MRP, ...
-                "Color", "k")
-
-            % If CI values exist add to the plot
-            if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
-                plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 1), ...
-                    obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 2), ...
-                    "LineStyle", ":", "Marker","none", "Color", "k")
-            end
-
-            % Tile 1 - Right - Axes(1, 2)
-            if obj.ShapeData.HavePressureData
-                plot(obj.Axes(1, 2), obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure, ...
-                    "color", "b")
+            % redraw chart based on number of windows and if they overlap
+            if (obj.ShapeData.NumWindows < 50) && ~obj.ShapeData.WindowsOverlap
+                chartType = "noOverlap";
             else
-                obj.Axes(1, 2).Visible = "off";
+                chartType = "Overlap";
             end
-
-            % Tile 2 - Left - Axes(2, 1)
-            plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, ...
-                obj.ShapeData.ResultsTable.EP, ...
-                "Color", "k")
-
-            % If CI values exist add to the plot
-            if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
-                plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 1), ...
-                    obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 2), ...
-                    "LineStyle", ":", "Marker","none", "Color", "k")
-            end
-
-            % Tile 2 - Right - Axes(2, 2)
-            if obj.ShapeData.HavePressureData
-                plot(obj.Axes(2, 2), obj.ShapeData.FilteredData.Time, ...
-                    obj.ShapeData.FilteredData.Pressure, ...
-                    "color", "b")
-            else
-                obj.Axes(2, 2).Visible = "off";
-            end
-
-            % Tile 3
-
-            % Check if b values exist
-            bValsExist = any(~ismissing(obj.ShapeData.ResultsTable.B_values), "all");
-
-            % If B values exist add 'B values' to Left axis - Axes(3, 1),
-            % and 'events per day' to right axis - Axes(3, 2)
-            if bValsExist
-
-                % Add b-values to left
-                ylabel(obj.Axes(3, 1), "b-value")
-                plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
-                    obj.ShapeData.ResultsTable.B_values, ...
-                    "color", "k")
-
-                % Also add CI values to left axis if they exist
-                if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
-                    plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 1), ...
-                        obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 2), ...
-                        "LineStyle", ":", "Marker","none", "color", "k")
-                end
-
-                % Add 'events per day' to right axis - Axes(3, 2)
-                ylabel(obj.Axes(3, 2), "Events/day")
-                plot(obj.Axes(3, 2), obj.ShapeData.ResultsTable.TimeMid, ...
-                    obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
-
-            else % If B values don't exist, add 'events per day' to left axis - Axes(3, 1), and hide right axis
-
-                % Plot events per day
-                ylabel(obj.Axes(3, 1), "Events/day")
-                plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
-                    obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
-
-                % Hide right axis
-                obj.Axes(3, 2).Visible = "off";
-                
-            end
-
-            % Global settings
-            set(obj.Axes(:, 2), "xtick", []) % This is required as xticks get turned back on when you plot with a datetime on the x
-            set(obj.Axes(:, 1), "XGrid", "on")
-            hold(obj.Axes, "off")
-
-        end % CreateChart_Overlap(obj)
-
-        function CreateChart_NoOverlap(obj)
 
             % Set dynamic annotations
             obj.setupCharts()
@@ -228,65 +140,92 @@ classdef ViewResults < shape.SHAPEComponent
             % Save number of windows for for loops
             numWindows = obj.ShapeData.NumWindows;
 
-            % Stop plot function changing axis properties and allow
-            % multiple lines
+            % Stop plot function changing axis properties
             hold(obj.Axes, "on")
 
             % Tile 1 - Left - Axes(1, 1)
-            for k = 1:numWindows
-                x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                y = repmat(obj.ShapeData.ResultsTable.MRP(k), 1, 2);
-                plot(obj.Axes(1, 1), x, y, "LineStyle", "-", ...
-                    "Marker","none", ...
-                    "Color", "k")
-            end
-
-            % If CI values exist add to the plot
-            if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
-                for k = 1:numWindows
-                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                    y_lower = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 1), 1, 2);
-                    y_upper = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 2), 1, 2);
-                    plot(obj.Axes(1, 1), x, y_lower, x, y_upper, ...
-                        "LineStyle", ":", "Marker","none", ...
+            switch chartType
+                case "Overlap"
+                    plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                        obj.ShapeData.ResultsTable.MRP, ...
                         "Color", "k")
-                end
-            end
+
+                    % If CI values exist add to the plot
+                    if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
+                        plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 1), ...
+                            obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 2), ...
+                            "LineStyle", ":", "Marker","none", "Color", "k")
+                    end
+                case "noOverlap"
+                    for k = 1:numWindows
+                        x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                        y = repmat(obj.ShapeData.ResultsTable.MRP(k), 1, 2);
+                        plot(obj.Axes(1, 1), x, y, "LineStyle", "-", ...
+                            "Marker","none", ...
+                            "Color", "k")
+                    end
+
+                    % If CI values exist add to the plot
+                    if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
+                        for k = 1:numWindows
+                            x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                            y_lower = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 1), 1, 2);
+                            y_upper = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 2), 1, 2);
+                            plot(obj.Axes(1, 1), x, y_lower, x, y_upper, ...
+                                "LineStyle", ":", "Marker","none", ...
+                                "Color", "k")
+                        end
+                    end
+            end % switch
 
             % Tile 1 - Right - Axes(1, 2)
             if obj.ShapeData.HavePressureData
                 plot(obj.Axes(1, 2), obj.ShapeData.FilteredData.Time, ...
                     obj.ShapeData.FilteredData.Pressure, ...
-                    "Color", "b")
+                    "color", "b")
             else
                 obj.Axes(1, 2).Visible = "off";
             end
 
             % Tile 2 - Left - Axes(2, 1)
-            for k = 1:numWindows
-                x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                y = repmat(obj.ShapeData.ResultsTable.EP(k), 1, 2);
-                plot(obj.Axes(2, 1), x, y, "LineStyle", "-", "Marker","none", ...
-                    "Color", "k")
-            end
-
-            % If CI values exist add to the plot
-            if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
-                for k = 1:numWindows
-                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                    y_lower = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 1), 1, 2);
-                    y_upper = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 2), 1, 2);
-                    plot(obj.Axes(2, 1), x, y_lower, x, y_upper, ...
-                        "LineStyle", ":", "Marker","none", ...
+            switch chartType
+                case "Overlap"
+                    plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                        obj.ShapeData.ResultsTable.EP, ...
                         "Color", "k")
-                end
-            end
+
+                    % If CI values exist add to the plot
+                    if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
+                        plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 1), ...
+                            obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 2), ...
+                            "LineStyle", ":", "Marker","none", "Color", "k")
+                    end
+                case "noOverlap"
+                    for k = 1:numWindows
+                        x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                        y = repmat(obj.ShapeData.ResultsTable.EP(k), 1, 2);
+                        plot(obj.Axes(2, 1), x, y, "LineStyle", "-", "Marker","none", ...
+                            "Color", "k")
+                    end
+
+                    % If CI values exist add to the plot
+                    if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
+                        for k = 1:numWindows
+                            x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                            y_lower = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 1), 1, 2);
+                            y_upper = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 2), 1, 2);
+                            plot(obj.Axes(2, 1), x, y_lower, x, y_upper, ...
+                                "LineStyle", ":", "Marker","none", ...
+                                "Color", "k")
+                        end
+                    end
+            end % switch
 
             % Tile 2 - Right - Axes(2, 2)
             if obj.ShapeData.HavePressureData
                 plot(obj.Axes(2, 2), obj.ShapeData.FilteredData.Time, ...
                     obj.ShapeData.FilteredData.Pressure, ...
-                    "Color", "b")
+                    "color", "b")
             else
                 obj.Axes(2, 2).Visible = "off";
             end
@@ -300,64 +239,104 @@ classdef ViewResults < shape.SHAPEComponent
             % and 'events per day' to right axis - Axes(3, 2)
             if bValsExist
 
-                % Add b-values to left
-                ylabel(obj.Axes(3, 1), "b-value")
-                for k = 1:numWindows
-                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                    y = repmat(obj.ShapeData.ResultsTable.B_values(k), 1, 2);
-                    plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
-                        "Color", "k")
-                end
+                switch chartType
+                    case "Overlap"
 
-                % Also add CI values to left axis if they exist
-                if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
-                    for k = 1:numWindows
-                        x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                        y_lower = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 1), 1, 2);
-                        y_upper = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 2), 1, 2);
-                        plot(obj.Axes(3, 1), x, y_lower, x, y_upper, ...
-                            "LineStyle", ":", "Marker","none", ...
-                            "Color", "k")
-                    end
-                end
+                        % Add b-values to left
+                        ylabel(obj.Axes(3, 1), "b-value")
+                        plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                            obj.ShapeData.ResultsTable.B_values, ...
+                            "color", "k")
 
-                % Add 'events per day' to right axis - Axes(3, 2)
-                ylabel(obj.Axes(3, 2), "Events/day")
-                for k = 1:numWindows
-                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                    y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
-                    plot(obj.Axes(3, 2), x, y, "LineStyle", "-", "Marker","none", ...
-                        "Color", "b")
-                end
+                        % Also add CI values to left axis if they exist
+                        if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
+                            plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 1), ...
+                                obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 2), ...
+                                "LineStyle", ":", "Marker","none", "color", "k")
+                        end
+
+                        % Add 'events per day' to right axis - Axes(3, 2)
+                        ylabel(obj.Axes(3, 2), "Events/day")
+                        plot(obj.Axes(3, 2), obj.ShapeData.ResultsTable.TimeMid, ...
+                            obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
+
+                    case "noOverlap"
+
+                        % Add b-values to left
+                        ylabel(obj.Axes(3, 1), "b-value")
+                        for k = 1:numWindows
+                            x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                            y = repmat(obj.ShapeData.ResultsTable.B_values(k), 1, 2);
+                            plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
+                                "Color", "k")
+                        end
+
+                        % Also add CI values to left axis if they exist
+                        if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
+                            for k = 1:numWindows
+                                x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                                y_lower = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 1), 1, 2);
+                                y_upper = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 2), 1, 2);
+                                plot(obj.Axes(3, 1), x, y_lower, x, y_upper, ...
+                                    "LineStyle", ":", "Marker","none", ...
+                                    "Color", "k")
+                            end
+                        end
+
+                        % Add 'events per day' to right axis - Axes(3, 2)
+                        ylabel(obj.Axes(3, 2), "Events/day")
+                        for k = 1:numWindows
+                            x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                            y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
+                            plot(obj.Axes(3, 2), x, y, "LineStyle", "-", "Marker","none", ...
+                                "Color", "b")
+                        end
+
+                end % switch
 
             else % If B values don't exist, add 'events per day' to left axis - Axes(3, 1), and hide right axis
 
-                % Add 'events per day' to left axis - Axes(3, 1)
-                ylabel(obj.Axes(3, 1), "Events/day")
-                for k = 1:numWindows
-                    x = obj.ShapeData.ResultsTable.TimeRange(k, :);
-                    y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
-                    plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
-                        "color", "k")
-                end
+                switch chartType
+                    case "Overlap"
+                        % Plot events per day
+                        ylabel(obj.Axes(3, 1), "Events/day")
+                        plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
+                            obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
+
+                    case "noOverlap"
+
+                        % Add 'events per day' to left axis - Axes(3, 1)
+                        ylabel(obj.Axes(3, 1), "Events/day")
+                        for k = 1:numWindows
+                            x = obj.ShapeData.ResultsTable.TimeRange(k, :);
+                            y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
+                            plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
+                                "color", "k")
+                        end
+
+                end % switch
 
                 % Hide right axis
                 obj.Axes(3, 2).Visible = "off";
-                
-            end % if bValsExist
 
-            % Some global setting for all axes
-            xt = unique( sort( obj.ShapeData.ResultsTable.TimeRange(:) ) );
-            xt.Format = "dd/MM/uu";
+            end % if - else b-values
+
+            if chartType == "noOverlap"
+
+                    % Axes settings
+                    xt = unique( sort( obj.ShapeData.ResultsTable.TimeRange(:) ) );
+                    xt.Format = "dd/MM/uu";
+                    set(obj.Axes(:, 1), "xtick", xt)
+                    xticklabels(obj.Axes(:, 1), string(xt))                    
+                    set(obj.Axes(:, 1), "XTickLabelRotation", 45)
+
+            end % if chartType == "noOverlap"
+
             set(obj.Axes(:, 2), "xtick", []) % This is required as xticks get turned back on when you plot with a datetime on the x
-            set(obj.Axes(:, 1), "xtick", xt)
-            xticklabels(obj.Axes(:, 1), string(xt))
             set(obj.Axes(:, 1), "XGrid", "on")
-            set(obj.Axes(:, 1), "XTickLabelRotation", 45)
-
             hold(obj.Axes, "off")
 
-        end % function CreateChart_NoOverlap(obj)
+        end % createChart
 
         function InitialiseCharts(obj)
 
