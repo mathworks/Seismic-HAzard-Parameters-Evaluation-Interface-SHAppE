@@ -17,6 +17,11 @@ classdef ViewResults < shape.SHAPEComponent
         ResultsCleared (:, 1) event.listener {mustBeScalarOrEmpty}
     end
 
+    properties (Constant)
+        leftAxisColour = "k";
+        rightAxisColour = "b";
+    end
+
     methods
 
         function obj = ViewResults(shapeData, namedArgs)
@@ -148,13 +153,13 @@ classdef ViewResults < shape.SHAPEComponent
                 case "Overlap"
                     plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, ...
                         obj.ShapeData.ResultsTable.MRP, ...
-                        "Color", "k")
+                        "Color", obj.leftAxisColour)
 
                     % If CI values exist add to the plot
                     if any(~ismissing(obj.ShapeData.ResultsTable.MRP_CI), "all")
                         plot(obj.Axes(1, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 1), ...
                             obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.MRP_CI(:, 2), ...
-                            "LineStyle", ":", "Marker","none", "Color", "k")
+                            "LineStyle", ":", "Marker","none", "Color", obj.leftAxisColour)
                     end
                 case "noOverlap"
                     for k = 1:numWindows
@@ -162,7 +167,7 @@ classdef ViewResults < shape.SHAPEComponent
                         y = repmat(obj.ShapeData.ResultsTable.MRP(k), 1, 2);
                         plot(obj.Axes(1, 1), x, y, "LineStyle", "-", ...
                             "Marker","none", ...
-                            "Color", "k")
+                            "Color", obj.leftAxisColour)
                     end
 
                     % If CI values exist add to the plot
@@ -173,7 +178,7 @@ classdef ViewResults < shape.SHAPEComponent
                             y_upper = repmat(obj.ShapeData.ResultsTable.MRP_CI(k, 2), 1, 2);
                             plot(obj.Axes(1, 1), x, y_lower, x, y_upper, ...
                                 "LineStyle", ":", "Marker","none", ...
-                                "Color", "k")
+                                "Color", obj.leftAxisColour)
                         end
                     end
             end % switch
@@ -182,7 +187,7 @@ classdef ViewResults < shape.SHAPEComponent
             if obj.ShapeData.HavePressureData
                 plot(obj.Axes(1, 2), obj.ShapeData.FilteredData.Time, ...
                     obj.ShapeData.FilteredData.Pressure, ...
-                    "color", "b")
+                    "color", obj.rightAxisColour)
             else
                 obj.Axes(1, 2).Visible = "off";
             end
@@ -192,20 +197,20 @@ classdef ViewResults < shape.SHAPEComponent
                 case "Overlap"
                     plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, ...
                         obj.ShapeData.ResultsTable.EP, ...
-                        "Color", "k")
+                        "Color", obj.leftAxisColour)
 
                     % If CI values exist add to the plot
                     if any(~ismissing(obj.ShapeData.ResultsTable.EP_CI), "all")
                         plot(obj.Axes(2, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 1), ...
                             obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.EP_CI(:, 2), ...
-                            "LineStyle", ":", "Marker","none", "Color", "k")
+                            "LineStyle", ":", "Marker","none", "Color", obj.leftAxisColour)
                     end
                 case "noOverlap"
                     for k = 1:numWindows
                         x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                         y = repmat(obj.ShapeData.ResultsTable.EP(k), 1, 2);
                         plot(obj.Axes(2, 1), x, y, "LineStyle", "-", "Marker","none", ...
-                            "Color", "k")
+                            "Color", obj.leftAxisColour)
                     end
 
                     % If CI values exist add to the plot
@@ -216,7 +221,7 @@ classdef ViewResults < shape.SHAPEComponent
                             y_upper = repmat(obj.ShapeData.ResultsTable.EP_CI(k, 2), 1, 2);
                             plot(obj.Axes(2, 1), x, y_lower, x, y_upper, ...
                                 "LineStyle", ":", "Marker","none", ...
-                                "Color", "k")
+                                "Color", obj.leftAxisColour)
                         end
                     end
             end % switch
@@ -225,7 +230,7 @@ classdef ViewResults < shape.SHAPEComponent
             if obj.ShapeData.HavePressureData
                 plot(obj.Axes(2, 2), obj.ShapeData.FilteredData.Time, ...
                     obj.ShapeData.FilteredData.Pressure, ...
-                    "color", "b")
+                    "color", obj.rightAxisColour)
             else
                 obj.Axes(2, 2).Visible = "off";
             end
@@ -246,19 +251,19 @@ classdef ViewResults < shape.SHAPEComponent
                         ylabel(obj.Axes(3, 1), "b-value")
                         plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
                             obj.ShapeData.ResultsTable.B_values, ...
-                            "color", "k")
+                            "color", obj.leftAxisColour)
 
                         % Also add CI values to left axis if they exist
                         if any(~ismissing(obj.ShapeData.ResultsTable.B_values_CI), "all")
                             plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 1), ...
                                 obj.ShapeData.ResultsTable.TimeMid, obj.ShapeData.ResultsTable.B_values_CI(:, 2), ...
-                                "LineStyle", ":", "Marker","none", "color", "k")
+                                "LineStyle", ":", "Marker","none", "color", obj.leftAxisColour)
                         end
 
                         % Add 'events per day' to right axis - Axes(3, 2)
                         ylabel(obj.Axes(3, 2), "Events/day")
                         plot(obj.Axes(3, 2), obj.ShapeData.ResultsTable.TimeMid, ...
-                            obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
+                            obj.ShapeData.ResultsTable.EventsPerDay, "color", obj.rightAxisColour)
 
                     case "noOverlap"
 
@@ -268,7 +273,7 @@ classdef ViewResults < shape.SHAPEComponent
                             x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                             y = repmat(obj.ShapeData.ResultsTable.B_values(k), 1, 2);
                             plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
-                                "Color", "k")
+                                "Color", obj.leftAxisColour)
                         end
 
                         % Also add CI values to left axis if they exist
@@ -279,7 +284,7 @@ classdef ViewResults < shape.SHAPEComponent
                                 y_upper = repmat(obj.ShapeData.ResultsTable.B_values_CI(k, 2), 1, 2);
                                 plot(obj.Axes(3, 1), x, y_lower, x, y_upper, ...
                                     "LineStyle", ":", "Marker","none", ...
-                                    "Color", "k")
+                                    "Color", obj.leftAxisColour)
                             end
                         end
 
@@ -289,7 +294,7 @@ classdef ViewResults < shape.SHAPEComponent
                             x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                             y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
                             plot(obj.Axes(3, 2), x, y, "LineStyle", "-", "Marker","none", ...
-                                "Color", "b")
+                                "Color", obj.rightAxisColour)
                         end
 
                 end % switch
@@ -301,7 +306,7 @@ classdef ViewResults < shape.SHAPEComponent
                         % Plot events per day
                         ylabel(obj.Axes(3, 1), "Events/day")
                         plot(obj.Axes(3, 1), obj.ShapeData.ResultsTable.TimeMid, ...
-                            obj.ShapeData.ResultsTable.EventsPerDay, "color", "b")
+                            obj.ShapeData.ResultsTable.EventsPerDay, "color", obj.rightAxisColour)
 
                     case "noOverlap"
 
@@ -311,7 +316,7 @@ classdef ViewResults < shape.SHAPEComponent
                             x = obj.ShapeData.ResultsTable.TimeRange(k, :);
                             y = repmat(obj.ShapeData.ResultsTable.EventsPerDay(k), 1, 2);
                             plot(obj.Axes(3, 1), x, y, "LineStyle", "-", "Marker","none", ...
-                                "color", "k")
+                                "color", obj.leftAxisColour)
                         end
 
                 end % switch
@@ -335,6 +340,9 @@ classdef ViewResults < shape.SHAPEComponent
             set(obj.Axes(:, 2), "xtick", []) % This is required as xticks get turned back on when you plot with a datetime on the x
             set(obj.Axes(:, 1), "XGrid", "on")
             hold(obj.Axes, "off")
+
+            % Set tile 1 left y axis scale to match drop down
+            obj.ChangeAxisScale()
 
         end % createChart
 
@@ -381,14 +389,11 @@ classdef ViewResults < shape.SHAPEComponent
             % Tile 3
             title(obj.Axes(3, 1), "Activity Rate")
 
-            % Sync axis with drop down
-            % obj.ChangeAxisScale()
-
         end
 
         function ChangeAxisScale(obj, ~, ~)
 
-            % obj.Axis1.YAxis(1).Scale = obj.ScaleDropDown.Value;
+            obj.Axes(1, 1).YAxis.Scale = obj.ScaleDropDown.Value;
 
         end
 
@@ -413,11 +418,7 @@ classdef ViewResults < shape.SHAPEComponent
 
         end
 
-    end % methods
-
-    methods (Static)
-
-        function Axes = createDoubleAxes(tLayout, tileNum)
+        function Axes = createDoubleAxes(obj, tLayout, tileNum)
 
             % Create axes as array
             Axes = axes("Parent", tLayout);
@@ -437,7 +438,7 @@ classdef ViewResults < shape.SHAPEComponent
             Axes(2).XTick = [];
 
             % Set right y axis colour
-            Axes(2).YAxis.Color = "b";
+            Axes(2).YAxis.Color = obj.rightAxisColour;
 
             % Link the x-axes so panning/zooming is shared
             linkaxes(Axes, "x");

@@ -203,10 +203,10 @@ classdef SHAPEApp < handle
         function onTabChanged(obj, ~, e)
             
             % If selected tab is "Off" (Disabled)
-            % if string( e.NewValue.UserData ) ~= "On"
-            %     % Go back to previous tab
-            %     obj.MainTabGroup.SelectedTab = e.OldValue;
-            % end
+            if string( e.NewValue.UserData ) ~= "On"
+                % Go back to previous tab
+                obj.MainTabGroup.SelectedTab = e.OldValue;
+            end
 
             % Set mouseovercallback if appropriate
             if (obj.MainTabGroup.SelectedTab == obj.FilterTab) && ...
