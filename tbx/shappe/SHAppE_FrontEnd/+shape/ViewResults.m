@@ -360,6 +360,8 @@ classdef ViewResults < shape.SHAPEComponent
             % Tile 3
             obj.Axes(3, :) = obj.createDoubleAxes(obj.TiledLayout, 3);
 
+            linkaxes(obj.Axes, "x");
+
         end
 
         function setupCharts(obj)
@@ -432,7 +434,8 @@ classdef ViewResults < shape.SHAPEComponent
             set(Axes(2), ...
                 "YAxisLocation", "right", ...
                 "Color", "none", ...
-                "Box", "off");
+                "Box", "off", ...
+                "PickableParts", "none");
 
             % Hide duplicate x-ticks
             Axes(2).XTick = [];
