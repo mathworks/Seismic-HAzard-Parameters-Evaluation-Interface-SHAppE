@@ -18,8 +18,8 @@ classdef ViewResults < shape.SHAPEComponent
     end
 
     properties (Constant)
-        leftAxisColour = "k";
-        rightAxisColour = "b";
+        leftAxisColour = "r"; % [0.0667, 0.4431, 0.7451] % yyaxis left colour
+        rightAxisColour = "b"; % [0.8667, 0.3294, 0] % yyaxis right colour
     end
 
     methods
@@ -434,10 +434,11 @@ classdef ViewResults < shape.SHAPEComponent
                 "Color", "none", ...
                 "Box", "off");
 
-            % Hide duplicate x-ticks on the top axes if you don"t want them
+            % Hide duplicate x-ticks
             Axes(2).XTick = [];
 
-            % Set right y axis colour
+            % Set y axis colors
+            Axes(1).YAxis.Color = obj.leftAxisColour;
             Axes(2).YAxis.Color = obj.rightAxisColour;
 
             % Link the x-axes so panning/zooming is shared
