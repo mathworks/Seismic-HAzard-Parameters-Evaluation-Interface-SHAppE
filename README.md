@@ -61,8 +61,9 @@ SHAPE functions are compatible with R2017b or later and require the following:
 ## Examples
 
 For further information check the dynamic poster from: 
-AGU&reg; 2024: https://agu24.ipostersessions.com/Default.aspx?s=70-48-54-74-A7-26-61-43-DA-37-35-81-88-E0-C0-57.
-AGU&reg; 2025: https://agu25.ipostersessions.com/default.aspx?s=7E-01-E0-44-1F-5D-25-47-DB-EB-60-49-0C-DC-E3-A4&guestview=true.
+- AGU&reg; 2024: https://agu24.ipostersessions.com/Default.aspx?s=70-48-54-74-A7-26-61-43-DA-37-35-81-88-E0-C0-57.
+- AGU&reg; 2025: https://agu25.ipostersessions.com/default.aspx?s=7E-01-E0-44-1F-5D-25-47-DB-EB-60-49-0C-DC-E3-A4&guestview=true.
+  
 ## Citation
 
 If you use SHAppE in your research, please cite:
