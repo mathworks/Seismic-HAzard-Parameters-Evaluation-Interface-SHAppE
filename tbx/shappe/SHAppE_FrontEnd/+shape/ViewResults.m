@@ -71,7 +71,7 @@ classdef ViewResults < shape.SHAPEComponent
             % Table View Tab
             obj.TableTab = uitab(obj.TabGroup, "Title", "Table");
             g = uigridlayout(obj.TableTab, [2, 1]);
-            obj.DisplayTable = uitable(g);
+            obj.DisplayTable = uitable(g);            
 
             % Controls grid
             buttonGrid = uigridlayout(obj.MainGrid, [1, 5], "ColumnWidth", repmat("fit", 1, 5));
@@ -113,12 +113,16 @@ classdef ViewResults < shape.SHAPEComponent
                 % Update table
                 obj.DisplayTable.Data = obj.ShapeData.ResultsTable;
 
-                % redraw chart based on number of windows and if they overlap
-                % if (obj.ShapeData.NumWindows < 50) && ~obj.ShapeData.WindowsOverlap
-                %     obj.CreateChart_NoOverlap();
-                % else
-                %     obj.CreateChart_Overlap();
-                % end
+                % Add r-click context menu to display table
+                rClickMenu = uicontextmenu(ancestor(obj, "matlab.ui.Figure"));
+                uimenu(rClickMenu, "Text", "Plot Distribution", ...
+                    "MenuSelectedFcn", @obj.PlotDistribution);
+                uimenu(rClickMenu, "Text", "Export Distribution", ...
+                    "MenuSelectedFcn", @obj.ExportDistribution, ...
+                    "Enable", "off");
+                obj.DisplayTable.ContextMenu = rClickMenu;   % attach to table
+
+                % Draw chart
                 obj.CreateChart()
 
             end % if ~isempty(obj.ShapeData.ResultsTable)
@@ -402,6 +406,53 @@ classdef ViewResults < shape.SHAPEComponent
 
             obj.Axes(1, 1).YAxis.Scale = obj.ScaleDropDown.Value;
 
+        end
+
+        function PlotDistribution(obj, ~, e)
+
+            % Identify selected window
+            wdwidx = e.InteractionInformation.DisplayRow;
+
+            try
+                % Extract distribution table
+                selectedDistTable = obj.ShapeData.ResultsTable.DistTables{wdwidx};
+
+                % Visualise
+                fig = figure;
+                tl = tiledlayout(fig, 2, 1);
+                titleString = obj.ShapeData.ResultsTable.TimeRange(wdwidx, :);
+                titleString = "Time Range: " + join(string(titleString), " " + char(8594) + " ");
+                tl.Title.String = titleString;
+
+                % CDF
+                ax1 = nexttile(tl);
+                cdf = plot(ax1, selectedDistTable.Magnitude, ...
+                    selectedDistTable.CDF);
+                xlabel(ax1, "Magnitude")
+                ylabel(ax1, "CDF")
+                grid(ax1, "on")
+                cdf(1).LineWidth = 1;
+                cdf(1).Color = "blue";
+                set(cdf([2, 3]), "LineStyle", "--", ...
+                    "color", "red");
+
+                % PDF
+                ax2 = nexttile(tl);
+                pdf = plot(ax2, selectedDistTable.Magnitude, ...
+                    selectedDistTable.PDF, ...
+                    "LineWidth", 1, "Color", "blue");
+                xlabel(ax2, "Magnitude")
+                ylabel(ax2, "PDF")
+                grid(ax2, "on")
+            catch
+
+            end
+
+        end
+
+        function ExportDistribution(obj, ~, ~)
+
+            
         end
 
         function ExportResultsTable(obj, ~, ~)            
