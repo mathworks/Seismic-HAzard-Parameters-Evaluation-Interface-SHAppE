@@ -8,7 +8,6 @@ classdef ViewResults < shape.SHAPEComponent
         ChartTab matlab.ui.container.Tab
         TiledLayout matlab.graphics.layout.TiledChartLayout
         Axes (3, 2) matlab.graphics.axis.Axes
-        Axis3 matlab.graphics.axis.Axes
         ScaleDropDown matlab.ui.control.DropDown
     end
 
@@ -74,18 +73,24 @@ classdef ViewResults < shape.SHAPEComponent
             g = uigridlayout(obj.TableTab, [2, 1]);
             obj.DisplayTable = uitable(g);
 
-            % Save and export buttons
+            % Controls grid
             buttonGrid = uigridlayout(obj.MainGrid, [1, 5], "ColumnWidth", repmat("fit", 1, 5));
-            uibutton(buttonGrid, "Text", "Save as .mat", ...
-                "Enable", "off", "Visible", "off");
-            uibutton(buttonGrid, "Text", "Export to Excel", ...
-                "ButtonPushedFcn", @obj.ExportResultsTable);
 
             % Linear / Log dropdown menu
             obj.ScaleDropDown = uidropdown(buttonGrid, ...
                 "Items", ["linear", "log"], ...
                 "ValueChangedFcn", @obj.ChangeAxisScale, ...
                 "Value", "log");
+
+            % Buttons
+            uibutton(buttonGrid, "Text", "Undock Chart", ...
+                "ButtonPushedFcn", @obj.popOutChart);            
+            uibutton(buttonGrid, "Text", "Export to Excel", ...
+                "ButtonPushedFcn", @obj.ExportResultsTable);
+            uibutton(buttonGrid, "Text", "Save as .mat", ...
+                "Enable", "off", "Visible", "on");
+
+            
 
             % Set up tiled layout and annotations
             obj.InitialiseCharts()
@@ -399,7 +404,7 @@ classdef ViewResults < shape.SHAPEComponent
 
         end
 
-        function ExportResultsTable(obj, ~, ~)
+        function ExportResultsTable(obj, ~, ~)            
 
             % Ask user for fileName
             [FileName, Location] = uiputfile("SeismologyResults.xlsx");
@@ -417,6 +422,16 @@ classdef ViewResults < shape.SHAPEComponent
                 obj.ShapeData.ExportData()
 
             end
+
+        end
+
+        function popOutChart(obj, ~, ~)
+            
+            % Create figure
+            figPop = figure;
+            
+            % Copy tiledlayout into new figure, this is a copy, not linked.
+            copyobj(obj.TiledLayout, figPop)
 
         end
 
