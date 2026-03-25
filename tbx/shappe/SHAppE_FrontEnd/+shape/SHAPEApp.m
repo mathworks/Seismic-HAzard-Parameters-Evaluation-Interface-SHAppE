@@ -61,6 +61,13 @@ classdef SHAPEApp < handle
                 "AutoResizeChildren", "off", ...
                 "Name", "SHAppE: Seismic HAzard Parameters Evaluation Interface");
 
+            % Add menu bar
+            fileMenu = uimenu(obj.Figure, "Text", "File");
+            uimenu(fileMenu, "Text", "Save current session...", ...
+                "MenuSelectedFcn", @obj.saveSession)
+            uimenu(fileMenu, "Text", "Load previous session...", ...
+                "MenuSelectedFcn", @obj.loadSession)
+
             obj.MainTabGroup = uitabgroup(obj.Figure, "Units","normalized", ...
                 "Position", [0, 0, 1, 1], ...
                 "SelectionChangedFcn", @obj.onTabChanged);
@@ -71,7 +78,7 @@ classdef SHAPEApp < handle
             obj.ProcessingTab = uitab(obj.MainTabGroup,"Title","Process Data");
             obj.ViewResultsTab = uitab(obj.MainTabGroup,"Title","View Results");
 
-            % Save a referance to tabs which can be toggled on/off for convienience
+            % Save a reference to tabs which can be toggled on/off for convenience
             obj.ToggleTabs = [obj.FilterTab, obj.WindowSelectionTab, ...
                 obj.ProcessingTab, obj.ViewResultsTab];
 
@@ -271,6 +278,67 @@ classdef SHAPEApp < handle
             end
 
         end % onTabChanged
+
+        function saveSession(obj, ~, ~)
+            
+            % Collate AppData
+            % appData.tabStates = 
+            % appData.SelectedMainTab = 
+            % appData.SelectedFilterTab = 
+            % appData.SelectedWindowTab = 
+            appData = [];
+
+            % Extract shapeData model
+            model = obj.ShapeData;
+
+            % Save
+            currentDateTime = string( datetime("now", "Format", "uuuu_MM_dd_HH_mm_ss") );
+            saveName = "SHAppE_Session_" + currentDateTime;
+            save(saveName, "model", "appData")
+
+            % Show dialog window to confirm
+            uialert(obj.Figure, ...
+                ["Session saved as: "; saveName + ".mat"], ...
+                "Session saved successfully", ...
+                "Icon", "success");
+
+        end % function saveSession(obj, ~, ~)
+
+        function loadSession(obj, ~, ~)
+
+            % User selects .mat file
+            [file, path] = uigetfile("*.mat");
+
+            % Refocus figure
+            focus(obj.Figure)
+
+            % If a file is selected
+            if file ~= 0
+
+                try
+                    % load previous session data
+                    load(fullfile(path, file), "model", "appData");
+
+                    % Update current model
+                    obj.ShapeData.importFromSavedSession(model)
+
+                    % Show dialog window to confirm
+                    uialert(obj.Figure, ...
+                        ["Previous session loaded successfully: "; file], ...
+                        "Session loaded successfully", ...
+                        "Icon", "success");
+                catch
+                    % Show dialog window to confirm
+                    uialert(obj.Figure, ...
+                        ["Could not load:"; file; ...
+                        "Ensure it is a valid SHAppE session .mat file"], ...
+                        "Session failed to load", ...
+                        "Icon", "error");
+                end
+
+            end % if file ~= 0
+
+        end % function loadSession(obj, ~, ~)
 
         function MouseHoverCallback(obj, ~, ~)
 

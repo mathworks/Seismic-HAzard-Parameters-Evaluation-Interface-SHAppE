@@ -10,7 +10,7 @@ classdef selectMagnitude < shape.SHAPEComponent
         SelectedMagnitudeDropDown matlab.ui.control.DropDown
         MagLimitSpinner matlab.ui.control.Spinner
         ApplyButton matlab.ui.control.Button
-        RestoreButton matlab.ui.control.Button
+        RestoreButton matlab.ui.control.Button 
     end
 
     methods

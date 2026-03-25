@@ -231,6 +231,7 @@ classdef selectWindows < shape.SHAPEComponent
 
                 % Turn on button
                 obj.SetWindowsButton.Enable = "on";
+                
             else
 
                 % Hide tabgroup

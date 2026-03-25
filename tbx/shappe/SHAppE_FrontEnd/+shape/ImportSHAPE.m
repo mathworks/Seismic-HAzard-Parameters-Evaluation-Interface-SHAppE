@@ -9,7 +9,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         FileNameDisplays (1, 4) matlab.ui.control.EditField
         BrowseButtons (1, 4) matlab.ui.control.Button
-        VarColumnIdxSpinners (1, 6) matlab.ui.control.Spinner  
+        VarColumnIdxSpinners (1, 6) matlab.ui.control.Spinner
         ImportButton (1, 1) matlab.ui.control.Button
         ClearButton (1, 1) matlab.ui.control.Button
 
@@ -137,8 +137,8 @@ classdef ImportSHAPE < shape.SHAPEComponent
             reqVarBlurb.Layout.Column = [1, 3];
             uilabel(obj.ControlsGrid, "Text", "Time");
             obj.VarColumnIdxSpinners(6) = uispinner(obj.ControlsGrid, ...
-                    "RoundFractionalValues","on", ...
-                    "Limits", [1, inf]);
+                "RoundFractionalValues","on", ...
+                "Limits", [1, inf]);
             obj.VarColumnIdxSpinners(6).Layout.Column = [2, 3];
 
             % Import button
@@ -170,10 +170,18 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         end
 
-        function update(~, ~, ~)
+        function update(obj, ~, ~)
+            % N.B. This method is run whenever a public property is changed
 
-            % This method is run whenever a public property is changed
-            
+            if ~isempty(obj.ShapeData.SeismicData)
+                obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
+                obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
+
+                % Display preview of imported data
+                obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
+            end
+
         end
 
     end % methods setup update
@@ -249,7 +257,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
                     % Display preview of imported data
                     obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
+                        timetable2table( obj.ShapeData.FilteredData(1:20, :) );
 
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...
@@ -273,7 +281,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
                     % Display preview of imported data
                     obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
+                        timetable2table( obj.ShapeData.FilteredData(1:20, :) );
 
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...

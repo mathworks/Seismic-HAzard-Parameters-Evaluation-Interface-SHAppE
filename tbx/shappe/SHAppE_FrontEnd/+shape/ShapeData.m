@@ -50,7 +50,6 @@ classdef ShapeData < handle
         TargetMagnitude (1, 1) {mustBeNumeric}
 
         NumBootStapItr (1, 1) {mustBeNumeric} = 100
-
     end
 
     % Result properties
@@ -74,7 +73,7 @@ classdef ShapeData < handle
 
             switch nargin
 
-                % Two inputs provided
+                % Four inputs provided
                 case 4
 
                     % Validation
@@ -87,7 +86,7 @@ classdef ShapeData < handle
                     % Import production data
                     obj.importProductionData(productionDataFileName, requiredPvarsIdx)
 
-                    % One input provided
+                % Two inputs provided
                 case 2
 
                     % Validation
@@ -96,14 +95,14 @@ classdef ShapeData < handle
                     % Import seismic data
                     obj.importSeismicData(seismicDataFileName, requiredSvarsIdx)
 
-                    % No or not enough inputs required
+                 % No or not enough inputs required
                 otherwise
 
             end % switch nargin
 
         end % function obj = ShapeData
 
-    end
+    end % Constructor
 
     methods % Public methods
 
@@ -606,6 +605,44 @@ classdef ShapeData < handle
             notify(obj, "ResultsCleared")
 
         end
+
+        function importFromSavedSession(obj, savedShapeDataObj)
+
+            arguments
+                obj (1, 1) shape.ShapeData
+                savedShapeDataObj (1, 1) shape.ShapeData
+            end            
+
+            % Set filter options
+            obj.Filter("selectedDateRange", savedShapeDataObj.selectedDateRange)
+            obj.Filter("selectedEpicentralValues", savedShapeDataObj.selectedEpicentralValues)
+            obj.Filter("selectedDepthRange", savedShapeDataObj.selectedDepthRange)
+            obj.Filter("selectedMagnitudeMinimum", savedShapeDataObj.selectedMagnitudeMinimum)
+
+            % Set window options
+            setWindows(obj, savedShapeDataObj.WindowDates, ...
+                savedShapeDataObj.WindowMethodInfo)
+
+            % Set Processing options
+            obj.Method = savedShapeDataObj.Method;
+            obj.Truncated = savedShapeDataObj.Truncated;
+            obj.EstimateMMax = savedShapeDataObj.EstimateMMax;
+            obj.M_Max = savedShapeDataObj.M_Max;
+            obj.M_Max_estimated = savedShapeDataObj.M_Max_estimated;
+            obj.NumTrials = savedShapeDataObj.NumTrials;
+            obj.TargetPeriodLength = savedShapeDataObj.TargetPeriodLength;
+            obj.SelectedTimeUnit = savedShapeDataObj.SelectedTimeUnit;
+            obj.TargetMagnitude = savedShapeDataObj.TargetMagnitude;
+            obj.NumBootStapItr = savedShapeDataObj.NumBootStapItr;
+
+            % Set data and data file names            
+            obj.SeismicDataFileName = savedShapeDataObj.SeismicDataFileName;
+            obj.ProductionDataFileName = savedShapeDataObj.ProductionDataFileName;
+            obj.SeismicData = savedShapeDataObj.SeismicData;
+
+            notify(obj, "SeismicDataImported")
+
+        end % function importFromShapeDataObject(obj, sdObj)
 
     end % Public methods
 
