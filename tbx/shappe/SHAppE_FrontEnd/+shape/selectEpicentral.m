@@ -65,7 +65,7 @@ classdef selectEpicentral < shape.SHAPEComponent
             geobasemap(obj.GeoAxes, obj.BaseMaps(1))
             ControlPanel = uipanel(obj.MainGrid);
             ControlGrid = uigridlayout(ControlPanel, [6, 1], ...
-                "RowHeight", {"fit", "fit", 10, "fit", "fit", "fit"}); 
+                "RowHeight", {"fit", "fit", 10, "fit", "fit", "fit"});
 
             % Dropdown to select basemap
             uilabel(ControlGrid, "Text", "Select base map style");
@@ -255,5 +255,16 @@ classdef selectEpicentral < shape.SHAPEComponent
         end
 
     end
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct.BaseMap = obj.BaseMapDropDown.Value;
+        end
+
+        function restoreComponentState(obj, stateStruct)
+            obj.BaseMapDropDown.Value = stateStruct.BaseMap;
+            obj.onBaseMapDDChanged();
+        end
+    end % return and restore state methods
 
 end % classdef

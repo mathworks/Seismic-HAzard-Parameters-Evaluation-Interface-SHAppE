@@ -281,12 +281,22 @@ classdef SHAPEApp < handle
 
         function saveSession(obj, ~, ~)
             
-            % Collate AppData
-            % appData.tabStates = 
-            % appData.SelectedMainTab = 
-            % appData.SelectedFilterTab = 
-            % appData.SelectedWindowTab = 
-            appData = [];
+            % Collect current state of each component (stuff that doesn't auto update from model)
+            % This functionality is implemented for each component, even
+            % when some have no states to be saved or loaded for consistency.
+            appData.Import = obj.ImportDataComponent.returnComponentState();
+            appData.MagnitudeFilter = obj.SelectMagnitudeComponent.returnComponentState();
+            appData.EpicentralFilter = obj.SelectEpicentalComponent.returnComponentState();
+            appData.DepthFilter = obj.SelectDepthRangeComponent.returnComponentState();
+            appData.TimeFilter = obj.SelectTimeComponent.returnComponentState();
+            appData.WindowSelection = obj.SelectDateRegionsComponent.returnComponentState();
+            appData.ProcessData = obj.ProcessComponent.returnComponentState();
+            appData.ViewResults = obj.ResultsComponent.returnComponentState();
+
+            % Add main app states
+            % appData.MainApp.TabStates = get(obj.MainTabGroup.Children, "UserData");
+            % appData.MainApp.FilterTabStates = 
+            % appData.MainApp.ActiveTab = 
 
             % Extract shapeData model
             model = obj.ShapeData;
@@ -322,6 +332,9 @@ classdef SHAPEApp < handle
                     % Update current model
                     obj.ShapeData.importFromSavedSession(model)
 
+                    % Update app state
+                    obj.updateAppState(appData)
+
                     % Show dialog window to confirm
                     uialert(obj.Figure, ...
                         ["Previous session loaded successfully: "; file], ...
@@ -352,5 +365,25 @@ classdef SHAPEApp < handle
         end
 
     end % callback methods
+
+    methods
+        
+        function updateAppState(obj, appData)
+
+            % Update state of each component
+            obj.ImportDataComponent.restoreComponentState(appData.Import) 
+            obj.SelectMagnitudeComponent.restoreComponentState(appData.MagnitudeFilter);
+            obj.SelectEpicentalComponent.restoreComponentState(appData.EpicentralFilter);
+            obj.SelectDepthRangeComponent.restoreComponentState(appData.DepthFilter);
+            obj.SelectTimeComponent.restoreComponentState(appData.TimeFilter);
+            obj.SelectDateRegionsComponent.restoreComponentState(appData.WindowSelection);
+            obj.ProcessComponent.restoreComponentState(appData.ProcessData);
+            obj.ResultsComponent.restoreComponentState(appData.ViewResults);
+
+            % Update general app states
+
+        end
+
+    end
 
 end % classdef

@@ -519,6 +519,17 @@ classdef ViewResults < shape.SHAPEComponent
 
         end % function [ax, data] = createDoubleAxes(tLayout, tileNum)
 
-    end % methods (Abstract)
+    end % methods
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct.YaxisScale = obj.ScaleDropDown.Value;
+        end
+
+        function restoreComponentState(obj, stateStruct)
+            obj.ScaleDropDown.Value = stateStruct.YaxisScale;
+            obj.ChangeAxisScale();
+        end
+    end % return and restore state methods
 
 end % classdef

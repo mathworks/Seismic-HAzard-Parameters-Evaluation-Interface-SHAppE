@@ -10,7 +10,7 @@ classdef selectMagnitude < shape.SHAPEComponent
         SelectedMagnitudeDropDown matlab.ui.control.DropDown
         MagLimitSpinner matlab.ui.control.Spinner
         ApplyButton matlab.ui.control.Button
-        RestoreButton matlab.ui.control.Button 
+        RestoreButton matlab.ui.control.Button
     end
 
     methods
@@ -151,5 +151,15 @@ classdef selectMagnitude < shape.SHAPEComponent
         end % onUndoButtonPushed
 
     end % callbacks
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct = struct.empty(0, 1);
+        end
+
+        function restoreComponentState(obj, stateStruct)
+
+        end
+    end % return and restore state methods
 
 end % classdef

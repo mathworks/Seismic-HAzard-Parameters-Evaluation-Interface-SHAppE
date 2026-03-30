@@ -108,12 +108,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 obj.VarColumnIdxSpinners(k).Layout.Column = [2, 3];
             end
 
-            % For testing with example files
-            % num = [1, 2, 3, 5, 4];
-            % for k = 1:5
-            %     obj.VarColumnIdxSpinners(k).Value = num(k);
-            % end
-
             % Production label
             prodLbl = uilabel(obj.ControlsGrid, ...
                 "Text", "Production data file name (Optional)");
@@ -323,5 +317,19 @@ classdef ImportSHAPE < shape.SHAPEComponent
         end
 
     end % callbacks
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct.VarColIdx = [obj.VarColumnIdxSpinners.Value];            
+        end
+
+        function restoreComponentState(obj, stateStruct)
+             
+            for k = 1:length(obj.VarColumnIdxSpinners)
+                obj.VarColumnIdxSpinners(k).Value = stateStruct.VarColIdx(k);
+            end
+
+        end
+    end % return and restore state methods
 
 end % classdef
