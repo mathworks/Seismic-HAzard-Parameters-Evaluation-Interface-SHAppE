@@ -172,8 +172,9 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
 
                 % Display preview of imported data
+                numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
                 obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
+                    timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
             end
 
         end

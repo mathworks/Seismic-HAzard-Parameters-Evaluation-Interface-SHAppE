@@ -68,6 +68,7 @@ classdef SHAPEApp < handle
             uimenu(fileMenu, "Text", "Load previous session...", ...
                 "MenuSelectedFcn", @obj.loadSession)
 
+            % Main tabs
             obj.MainTabGroup = uitabgroup(obj.Figure, "Units","normalized", ...
                 "Position", [0, 0, 1, 1], ...
                 "SelectionChangedFcn", @obj.onTabChanged);
@@ -168,9 +169,6 @@ classdef SHAPEApp < handle
                 case "Dark Theme"
                     set(obj.ToggleTabs([1, 2]), "UserData", "On", "ForegroundColor", 0.851*ones(1, 3))
             end
-
-            % Move to results tab
-            % obj.MainTabGroup.SelectedTab = obj.FilterTab;
 
         end % onSeismicDataImported
 
@@ -293,10 +291,10 @@ classdef SHAPEApp < handle
             appData.ProcessData = obj.ProcessComponent.returnComponentState();
             appData.ViewResults = obj.ResultsComponent.returnComponentState();
 
-            % Add main app states
-            % appData.MainApp.TabStates = get(obj.MainTabGroup.Children, "UserData");
-            % appData.MainApp.FilterTabStates = 
-            % appData.MainApp.ActiveTab = 
+            % Collect active tab info for main app and filters (windows is
+            % done in the component)
+            appData.MainApp.MainActiveTabIdx = obj.MainTabGroup.Children == obj.MainTabGroup.SelectedTab;
+            appData.MainApp.FilterActiveTabIdx = obj.FilterTabGroup.Children == obj.FilterTabGroup.SelectedTab;
 
             % Extract shapeData model
             model = obj.ShapeData;
@@ -334,6 +332,14 @@ classdef SHAPEApp < handle
 
                     % Update app state
                     obj.updateAppState(appData)
+                    
+                    % Go to active main tab
+                    ActiveMainTab = obj.MainTabGroup.Children(appData.MainApp.MainActiveTabIdx);
+                    obj.MainTabGroup.SelectedTab = ActiveMainTab;
+
+                    % Go to active filter tab
+                    ActiveFilterTab = obj.FilterTabGroup.Children(appData.MainApp.FilterActiveTabIdx);
+                    obj.FilterTabGroup.SelectedTab = ActiveFilterTab;
 
                     % Show dialog window to confirm
                     uialert(obj.Figure, ...

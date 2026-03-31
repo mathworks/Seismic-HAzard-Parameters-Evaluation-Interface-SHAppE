@@ -619,11 +619,12 @@ classdef selectWindows < shape.SHAPEComponent
 
     methods % Used for saving and loading session
         function stateStruct = returnComponentState(obj)
-            stateStruct = struct.empty(0, 1);
+            stateStruct.ActiveTabIdx = obj.TabGroup.Children == obj.TabGroup.SelectedTab;
         end
 
         function restoreComponentState(obj, stateStruct)
-
+            ActiveTab = obj.TabGroup.Children(stateStruct.ActiveTabIdx);
+            obj.TabGroup.SelectedTab = ActiveTab;
         end
     end % return and restore state methods
 
