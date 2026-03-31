@@ -11,6 +11,7 @@ classdef selectEpicentral < shape.SHAPEComponent
         ROI images.roi.Polygon
         ApplyButton matlab.ui.control.Button
         ClearButton matlab.ui.control.Button
+        epiPointsTable matlab.ui.control.Table
     end
 
     properties
@@ -25,8 +26,8 @@ classdef selectEpicentral < shape.SHAPEComponent
         SelectedColour = [0, 1, 0];
     end
 
-    properties (Access=private) % Data Related
-        L event.listener
+    properties (Access=private)
+        ROIListeners event.listener
     end
 
     methods
@@ -59,13 +60,13 @@ classdef selectEpicentral < shape.SHAPEComponent
 
             % Create graphics
             obj.MainGrid = uigridlayout(obj, [1, 2], ...
-                "ColumnWidth", {"1x", 175});
+                "ColumnWidth", {"1x", "fit"});
 
             obj.GeoAxes = geoaxes(obj.MainGrid);
             geobasemap(obj.GeoAxes, obj.BaseMaps(1))
             ControlPanel = uipanel(obj.MainGrid);
-            ControlGrid = uigridlayout(ControlPanel, [6, 1], ...
-                "RowHeight", {"fit", "fit", 10, "fit", "fit", "fit"});
+            ControlGrid = uigridlayout(ControlPanel, [8, 1], ...
+                "RowHeight", {"fit", "fit", 10, "fit", "fit", "fit", 10, "fit"});
 
             % Dropdown to select basemap
             uilabel(ControlGrid, "Text", "Select base map style");
@@ -97,6 +98,14 @@ classdef selectEpicentral < shape.SHAPEComponent
             obj.ClearButton = uibutton(ControlGrid, ...
                 "Text", "Restore Default Value", ...
                 "ButtonPushedFcn", @obj.onClearButtonPushed);
+
+            % Create long lat display table
+            obj.epiPointsTable = uitable(ControlGrid, ...
+                "ColumnEditable", [true, true], ...
+                "ColumnName", ["Latitude", "Longitude"], ...
+                "RowName", [], ...
+                "DisplayDataChangedFcn", @obj.onEpiTableEdited);
+            obj.epiPointsTable.Layout.Row = 8;
 
         end
 
@@ -161,20 +170,29 @@ classdef selectEpicentral < shape.SHAPEComponent
                 % Change colour of not selected points
                 obj.GeoScatter.CData(~idx, :) = repmat(obj.NotSelectedColour, numNotSelectedPoints, 1);
 
+                % Update epi table
+                obj.epiPointsTable.Data = obj.ROI.Position;
+
             end % if ~isempty(obj.ROI.Position)
 
         end % onPolyMoved
 
         function DrawPoly(obj, ~, ~)
 
-            % Call this to reset
+            % Reset Polygon
             obj.onPolyMoved
+
+            % Reset epi table
+            obj.epiPointsTable.Data = [];
 
             % Reset colours
             obj.GeoScatter.CData = obj.NotSelectedColour;
 
             % Draw new ROI
             draw(obj.ROI)
+
+            % Update epi table
+            obj.epiPointsTable.Data = obj.ROI.Position;
 
             obj.ApplyButton.Enable = "on";
 
@@ -198,7 +216,7 @@ classdef selectEpicentral < shape.SHAPEComponent
                 latLims = obj.GeoAxes.LatitudeLimits;
                 lonLims = obj.GeoAxes.LongitudeLimits;
 
-                % Set property using filter methodserial
+                % Set property using filter method
                 obj.ShapeData.Filter("selectedEpicentralValues", obj.ROI.Position)
 
                 % Set colour
@@ -229,6 +247,9 @@ classdef selectEpicentral < shape.SHAPEComponent
             % obj.InitilaizeROI()
             obj.onPolyMoved()
 
+            % Clear epi table
+            obj.epiPointsTable.Data = [];
+
         end % onClearButtonPushed
 
     end
@@ -246,12 +267,26 @@ classdef selectEpicentral < shape.SHAPEComponent
 
             % Create polygon listeners
             listenerNames = ["ROIMoved", "MovingROI", ...
-                "DrawingFinished", "DeletingROI", "VertexDeleted"];
-            for k = 1:5
+                "DrawingFinished", "DeletingROI", "VertexDeleted", ...
+                "VertexAdded"];
+            for k = 1:length(listenerNames)
                 l(k) = listener(obj.ROI, listenerNames(k), @obj.onPolyMoved); %#ok<AGROW>
             end
-            obj.L = l;
+            obj.ROIListeners = l;
 
+        end
+
+        function onEpiTableEdited(obj, ~, ~)
+            % Update ROI to match data
+            newData = obj.epiPointsTable.Data;
+
+            % Checks
+
+            % Update ROI position
+            obj.ROI.Position = newData;
+
+            % Run roi moved callback
+            obj.onPolyMoved();
         end
 
     end
