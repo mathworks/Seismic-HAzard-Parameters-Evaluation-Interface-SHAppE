@@ -46,8 +46,8 @@ classdef ImportSHAPE < shape.SHAPEComponent
         function setup(obj)
 
             % Main grid
-            obj.MainGrid = uigridlayout(obj, [1, 2], ...
-                "RowHeight", {"fit"}, ...
+            obj.MainGrid = uigridlayout(obj, [3, 2], ...
+                "RowHeight", {"fit", "fit", "fit"}, ...
                 "ColumnWidth", {"fit", "1x"});
 
             % Getting started panel
@@ -147,10 +147,19 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 "ButtonPushedFcn", @obj.onClearButtonPressed);
             obj.ClearButton.Layout.Column = 3;
 
+            % Submit feedback panel
+            feedbackPanel = uipanel(obj.MainGrid, ...
+                "Title", "Submit Feedback");
+            feedbackPanel.Layout.Row = 3;
+            feedbackPanel.Layout.Column = 1;
+            feedbackGrid = uigridlayout(feedbackPanel, [1, 1]);
+            uibutton(feedbackGrid, "Text", "Send us your feedback", ...
+                "ButtonPushedFcn", @obj.onFeedbackButtonPushed)
+
             % Imported data panel
             importedPanel = uipanel(obj.MainGrid, ...
-                "Title", "Data Preview (First 20 rows)");
-            importedPanel.Layout.Row = [1, 2];
+                "Title", "Filtered Data Preview (Maximum of 20 rows)");
+            importedPanel.Layout.Row = [1, 3];
             importedPanel.Layout.Column = 2;
 
             % Imported data grid
@@ -315,6 +324,11 @@ classdef ImportSHAPE < shape.SHAPEComponent
             % Display selected file name
             set(obj.FileNameDisplays, "Value", "");
 
+        end
+
+        function onFeedbackButtonPushed(~, ~, ~)
+            formURL = "https://forms.office.com/Pages/ResponsePage.aspx?id=ETrdmUhDaESb3eUHKx3B5sf0ERc1zKtOvOAJPNCpnX9UOEFBNDFXRDYySTQ4SThEUTJIN05KSDBNVS4u";
+            web(formURL, "-browser")
         end
 
     end % callbacks
