@@ -39,4 +39,9 @@ classdef (Abstract) SHAPEComponent < matlab.ui.componentcontainer.ComponentConta
 
         end
     end
+
+    methods (Abstract)
+        stateStruct = returnComponentState(obj)
+        restoreComponentState(obj, stateStruct)
+    end % Abstract methods
 end

@@ -61,6 +61,14 @@ classdef SHAPEApp < handle
                 "AutoResizeChildren", "off", ...
                 "Name", "SHAppE: Seismic HAzard Parameters Evaluation Interface");
 
+            % Add menu bar
+            fileMenu = uimenu(obj.Figure, "Text", "File");
+            uimenu(fileMenu, "Text", "Save current session...", ...
+                "MenuSelectedFcn", @obj.saveSession)
+            uimenu(fileMenu, "Text", "Load previous session...", ...
+                "MenuSelectedFcn", @obj.loadSession)
+
+            % Main tabs
             obj.MainTabGroup = uitabgroup(obj.Figure, "Units","normalized", ...
                 "Position", [0, 0, 1, 1], ...
                 "SelectionChangedFcn", @obj.onTabChanged);
@@ -71,7 +79,7 @@ classdef SHAPEApp < handle
             obj.ProcessingTab = uitab(obj.MainTabGroup,"Title","Process Data");
             obj.ViewResultsTab = uitab(obj.MainTabGroup,"Title","View Results");
 
-            % Save a referance to tabs which can be toggled on/off for convienience
+            % Save a reference to tabs which can be toggled on/off for convenience
             obj.ToggleTabs = [obj.FilterTab, obj.WindowSelectionTab, ...
                 obj.ProcessingTab, obj.ViewResultsTab];
 
@@ -161,9 +169,6 @@ classdef SHAPEApp < handle
                 case "Dark Theme"
                     set(obj.ToggleTabs([1, 2]), "UserData", "On", "ForegroundColor", 0.851*ones(1, 3))
             end
-
-            % Move to results tab
-            % obj.MainTabGroup.SelectedTab = obj.FilterTab;
 
         end % onSeismicDataImported
 
@@ -272,6 +277,88 @@ classdef SHAPEApp < handle
 
         end % onTabChanged
 
+        function saveSession(obj, ~, ~)
+            
+            % Collect current state of each component (stuff that doesn't auto update from model)
+            % This functionality is implemented for each component, even
+            % when some have no states to be saved or loaded for consistency.
+            appData.Import = obj.ImportDataComponent.returnComponentState();
+            appData.MagnitudeFilter = obj.SelectMagnitudeComponent.returnComponentState();
+            appData.EpicentralFilter = obj.SelectEpicentalComponent.returnComponentState();
+            appData.DepthFilter = obj.SelectDepthRangeComponent.returnComponentState();
+            appData.TimeFilter = obj.SelectTimeComponent.returnComponentState();
+            appData.WindowSelection = obj.SelectDateRegionsComponent.returnComponentState();
+            appData.ProcessData = obj.ProcessComponent.returnComponentState();
+            appData.ViewResults = obj.ResultsComponent.returnComponentState();
+
+            % Collect active tab info for main app and filters (windows is
+            % done in the component)
+            appData.MainApp.MainActiveTabIdx = obj.MainTabGroup.Children == obj.MainTabGroup.SelectedTab;
+            appData.MainApp.FilterActiveTabIdx = obj.FilterTabGroup.Children == obj.FilterTabGroup.SelectedTab;
+
+            % Extract shapeData model
+            model = obj.ShapeData;
+
+            % Save
+            currentDateTime = string( datetime("now", "Format", "uuuu_MM_dd_HH_mm_ss") );
+            saveName = "SHAppE_Session_" + currentDateTime;
+            save(saveName, "model", "appData")
+
+            % Show dialog window to confirm
+            uialert(obj.Figure, ...
+                ["Session saved as: "; saveName + ".mat"], ...
+                "Session saved successfully", ...
+                "Icon", "success");
+
+        end % function saveSession(obj, ~, ~)
+
+        function loadSession(obj, ~, ~)
+
+            % User selects .mat file
+            [file, path] = uigetfile("*.mat");
+
+            % Refocus figure
+            focus(obj.Figure)
+
+            % If a file is selected
+            if file ~= 0
+
+                try
+                    % load previous session data
+                    load(fullfile(path, file), "model", "appData");
+
+                    % Update current model
+                    obj.ShapeData.importFromSavedSession(model)
+
+                    % Update app state
+                    obj.updateAppState(appData)
+                    
+                    % Go to active main tab
+                    ActiveMainTab = obj.MainTabGroup.Children(appData.MainApp.MainActiveTabIdx);
+                    obj.MainTabGroup.SelectedTab = ActiveMainTab;
+
+                    % Go to active filter tab
+                    ActiveFilterTab = obj.FilterTabGroup.Children(appData.MainApp.FilterActiveTabIdx);
+                    obj.FilterTabGroup.SelectedTab = ActiveFilterTab;
+
+                    % Show dialog window to confirm
+                    uialert(obj.Figure, ...
+                        ["Previous session loaded successfully: "; file], ...
+                        "Session loaded successfully", ...
+                        "Icon", "success");
+                catch
+                    % Show dialog window to confirm
+                    uialert(obj.Figure, ...
+                        ["Could not load:"; file; ...
+                        "Ensure it is a valid SHAppE session .mat file"], ...
+                        "Session failed to load", ...
+                        "Icon", "error");
+                end
+
+            end % if file ~= 0
+
+        end % function loadSession(obj, ~, ~)
+
         function MouseHoverCallback(obj, ~, ~)
 
             if (obj.MainTabGroup.SelectedTab.Title == "Window Selection")
@@ -284,5 +371,25 @@ classdef SHAPEApp < handle
         end
 
     end % callback methods
+
+    methods
+        
+        function updateAppState(obj, appData)
+
+            % Update state of each component
+            obj.ImportDataComponent.restoreComponentState(appData.Import) 
+            obj.SelectMagnitudeComponent.restoreComponentState(appData.MagnitudeFilter);
+            obj.SelectEpicentalComponent.restoreComponentState(appData.EpicentralFilter);
+            obj.SelectDepthRangeComponent.restoreComponentState(appData.DepthFilter);
+            obj.SelectTimeComponent.restoreComponentState(appData.TimeFilter);
+            obj.SelectDateRegionsComponent.restoreComponentState(appData.WindowSelection);
+            obj.ProcessComponent.restoreComponentState(appData.ProcessData);
+            obj.ResultsComponent.restoreComponentState(appData.ViewResults);
+
+            % Update general app states
+
+        end
+
+    end
 
 end % classdef

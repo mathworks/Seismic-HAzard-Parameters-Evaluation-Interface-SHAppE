@@ -145,7 +145,7 @@ classdef selectWindows < shape.SHAPEComponent
             chartOptionsGrid = uigridlayout(mainGraphicalGrid, ...
                 "RowHeight", ["fit", "fit"], "ColumnWidth", ["fit", "fit"]);
 
-            uilabel(chartOptionsGrid, "Text", "Chosen Y Axis Data");            
+            uilabel(chartOptionsGrid, "Text", "Chosen Y Axis Data");
             obj.YAxisDataDropDown = uidropdown(chartOptionsGrid, ...
                 "ValueChangedFcn", @obj.onYAxisDropDownChanged, ...
                 "Items", string.empty(0, 1));
@@ -162,7 +162,7 @@ classdef selectWindows < shape.SHAPEComponent
                 "ButtonPushedFcn", @obj.clearAllRegions);
             uibutton(clearOptionsGrid, "Text", "Clear Last", ...
                 "ButtonPushedFcn", @obj.clearLastRegion);
-            
+
 
             % Create plot and then axes clicked callback
             % (Important for the callback to be set after plot)
@@ -231,6 +231,7 @@ classdef selectWindows < shape.SHAPEComponent
 
                 % Turn on button
                 obj.SetWindowsButton.Enable = "on";
+
             else
 
                 % Hide tabgroup
@@ -615,5 +616,16 @@ classdef selectWindows < shape.SHAPEComponent
         end % setWindowsFile(obj)
 
     end % methods
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct.ActiveTabIdx = obj.TabGroup.Children == obj.TabGroup.SelectedTab;
+        end
+
+        function restoreComponentState(obj, stateStruct)
+            ActiveTab = obj.TabGroup.Children(stateStruct.ActiveTabIdx);
+            obj.TabGroup.SelectedTab = ActiveTab;
+        end
+    end % return and restore state methods
 
 end % classdef

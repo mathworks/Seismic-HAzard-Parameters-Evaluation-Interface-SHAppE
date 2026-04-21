@@ -8,7 +8,6 @@ classdef ViewResults < shape.SHAPEComponent
         ChartTab matlab.ui.container.Tab
         TiledLayout matlab.graphics.layout.TiledChartLayout
         Axes (3, 2) matlab.graphics.axis.Axes
-        Axis3 matlab.graphics.axis.Axes
         ScaleDropDown matlab.ui.control.DropDown
     end
 
@@ -72,20 +71,26 @@ classdef ViewResults < shape.SHAPEComponent
             % Table View Tab
             obj.TableTab = uitab(obj.TabGroup, "Title", "Table");
             g = uigridlayout(obj.TableTab, [2, 1]);
-            obj.DisplayTable = uitable(g);
+            obj.DisplayTable = uitable(g);            
 
-            % Save and export buttons
+            % Controls grid
             buttonGrid = uigridlayout(obj.MainGrid, [1, 5], "ColumnWidth", repmat("fit", 1, 5));
-            uibutton(buttonGrid, "Text", "Save as .mat", ...
-                "Enable", "off", "Visible", "off");
-            uibutton(buttonGrid, "Text", "Export to Excel", ...
-                "ButtonPushedFcn", @obj.ExportResultsTable);
 
             % Linear / Log dropdown menu
             obj.ScaleDropDown = uidropdown(buttonGrid, ...
                 "Items", ["linear", "log"], ...
                 "ValueChangedFcn", @obj.ChangeAxisScale, ...
                 "Value", "log");
+
+            % Buttons
+            uibutton(buttonGrid, "Text", "Undock Chart", ...
+                "ButtonPushedFcn", @obj.popOutChart);            
+            uibutton(buttonGrid, "Text", "Export to Excel", ...
+                "ButtonPushedFcn", @obj.ExportResultsTable);
+            uibutton(buttonGrid, "Text", "Save as .mat", ...
+                "Enable", "off", "Visible", "on");
+
+            
 
             % Set up tiled layout and annotations
             obj.InitialiseCharts()
@@ -108,12 +113,16 @@ classdef ViewResults < shape.SHAPEComponent
                 % Update table
                 obj.DisplayTable.Data = obj.ShapeData.ResultsTable;
 
-                % redraw chart based on number of windows and if they overlap
-                % if (obj.ShapeData.NumWindows < 50) && ~obj.ShapeData.WindowsOverlap
-                %     obj.CreateChart_NoOverlap();
-                % else
-                %     obj.CreateChart_Overlap();
-                % end
+                % Add r-click context menu to display table
+                rClickMenu = uicontextmenu(ancestor(obj, "matlab.ui.Figure"));
+                uimenu(rClickMenu, "Text", "Plot Distribution", ...
+                    "MenuSelectedFcn", @obj.PlotDistribution);
+                uimenu(rClickMenu, "Text", "Export Distribution", ...
+                    "MenuSelectedFcn", @obj.ExportDistribution, ...
+                    "Enable", "off");
+                obj.DisplayTable.ContextMenu = rClickMenu;   % attach to table
+
+                % Draw chart
                 obj.CreateChart()
 
             end % if ~isempty(obj.ShapeData.ResultsTable)
@@ -399,7 +408,54 @@ classdef ViewResults < shape.SHAPEComponent
 
         end
 
-        function ExportResultsTable(obj, ~, ~)
+        function PlotDistribution(obj, ~, e)
+
+            % Identify selected window
+            wdwidx = e.InteractionInformation.DisplayRow;
+
+            try
+                % Extract distribution table
+                selectedDistTable = obj.ShapeData.ResultsTable.DistTables{wdwidx};
+
+                % Visualise
+                fig = figure;
+                tl = tiledlayout(fig, 2, 1);
+                titleString = obj.ShapeData.ResultsTable.TimeRange(wdwidx, :);
+                titleString = "Time Range: " + join(string(titleString), " " + char(8594) + " ");
+                tl.Title.String = titleString;
+
+                % CDF
+                ax1 = nexttile(tl);
+                cdf = plot(ax1, selectedDistTable.Magnitude, ...
+                    selectedDistTable.CDF);
+                xlabel(ax1, "Magnitude")
+                ylabel(ax1, "CDF")
+                grid(ax1, "on")
+                cdf(1).LineWidth = 1;
+                cdf(1).Color = "blue";
+                set(cdf([2, 3]), "LineStyle", "--", ...
+                    "color", "red");
+
+                % PDF
+                ax2 = nexttile(tl);
+                pdf = plot(ax2, selectedDistTable.Magnitude, ...
+                    selectedDistTable.PDF, ...
+                    "LineWidth", 1, "Color", "blue");
+                xlabel(ax2, "Magnitude")
+                ylabel(ax2, "PDF")
+                grid(ax2, "on")
+            catch
+
+            end
+
+        end
+
+        function ExportDistribution(obj, ~, ~)
+
+            
+        end
+
+        function ExportResultsTable(obj, ~, ~)            
 
             % Ask user for fileName
             [FileName, Location] = uiputfile("SeismologyResults.xlsx");
@@ -417,6 +473,16 @@ classdef ViewResults < shape.SHAPEComponent
                 obj.ShapeData.ExportData()
 
             end
+
+        end
+
+        function popOutChart(obj, ~, ~)
+            
+            % Create figure
+            figPop = figure;
+            
+            % Copy tiledlayout into new figure, this is a copy, not linked.
+            copyobj(obj.TiledLayout, figPop)
 
         end
 
@@ -453,6 +519,17 @@ classdef ViewResults < shape.SHAPEComponent
 
         end % function [ax, data] = createDoubleAxes(tLayout, tileNum)
 
-    end % methods (Abstract)
+    end % methods
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct.YaxisScale = obj.ScaleDropDown.Value;
+        end
+
+        function restoreComponentState(obj, stateStruct)
+            obj.ScaleDropDown.Value = stateStruct.YaxisScale;
+            obj.ChangeAxisScale();
+        end
+    end % return and restore state methods
 
 end % classdef

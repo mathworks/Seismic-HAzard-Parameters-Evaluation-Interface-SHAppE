@@ -3,13 +3,14 @@
 classdef ImportSHAPE < shape.SHAPEComponent
 
     properties (Access = private)
+        BaseGrid matlab.ui.container.GridLayout
         MainGrid matlab.ui.container.GridLayout
         ControlsPanel matlab.ui.container.Panel
         ControlsGrid matlab.ui.container.GridLayout
 
         FileNameDisplays (1, 4) matlab.ui.control.EditField
         BrowseButtons (1, 4) matlab.ui.control.Button
-        VarColumnIdxSpinners (1, 6) matlab.ui.control.Spinner  
+        VarColumnIdxSpinners (1, 6) matlab.ui.control.Spinner
         ImportButton (1, 1) matlab.ui.control.Button
         ClearButton (1, 1) matlab.ui.control.Button
 
@@ -45,16 +46,21 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function setup(obj)
 
-            % Main grid
-            obj.MainGrid = uigridlayout(obj, [1, 2], ...
-                "RowHeight", {"fit"}, ...
+            % Base grid
+            obj.BaseGrid = uigridlayout(obj, [1, 2], ...
+                "RowHeight", {"1x"}, ...
                 "ColumnWidth", {"fit", "1x"});
+
+            % Main grid
+            obj.MainGrid = uigridlayout(obj.BaseGrid, [3, 1], ...
+                "RowHeight", {"fit", "fit", "fit"}, ...
+                "ColumnWidth", {"fit"});
 
             % Getting started panel
             startPanel = uipanel(obj.MainGrid, ...
                 "Title", "Getting Started");
-            startPanel.Layout.Row = 1;
-            startPanel.Layout.Column = 1;
+            % startPanel.Layout.Row = 1;
+            % startPanel.Layout.Column = 1;
 
             % Getting started grid
             startGrid = uigridlayout(startPanel, [1, 2], ...
@@ -72,8 +78,8 @@ classdef ImportSHAPE < shape.SHAPEComponent
             % Import files panel
             obj.ControlsPanel = uipanel(obj.MainGrid, ...
                 "Title", "Select files to import");
-            obj.ControlsPanel.Layout.Row = 2;
-            obj.ControlsPanel.Layout.Column = 1;
+            % obj.ControlsPanel.Layout.Row = 2;
+            % obj.ControlsPanel.Layout.Column = 1;
 
             obj.ControlsGrid = uigridlayout(obj.ControlsPanel, [12, 3], ...
                 "RowHeight", {"fit", "fit", "fit", "fit", "fit", "fit", ...
@@ -108,12 +114,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 obj.VarColumnIdxSpinners(k).Layout.Column = [2, 3];
             end
 
-            % For testing with example files
-            % num = [1, 2, 3, 5, 4];
-            % for k = 1:5
-            %     obj.VarColumnIdxSpinners(k).Value = num(k);
-            % end
-
             % Production label
             prodLbl = uilabel(obj.ControlsGrid, ...
                 "Text", "Production data file name (Optional)");
@@ -137,8 +137,8 @@ classdef ImportSHAPE < shape.SHAPEComponent
             reqVarBlurb.Layout.Column = [1, 3];
             uilabel(obj.ControlsGrid, "Text", "Time");
             obj.VarColumnIdxSpinners(6) = uispinner(obj.ControlsGrid, ...
-                    "RoundFractionalValues","on", ...
-                    "Limits", [1, inf]);
+                "RoundFractionalValues","on", ...
+                "Limits", [1, inf]);
             obj.VarColumnIdxSpinners(6).Layout.Column = [2, 3];
 
             % Import button
@@ -153,11 +153,20 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 "ButtonPushedFcn", @obj.onClearButtonPressed);
             obj.ClearButton.Layout.Column = 3;
 
+            % Submit feedback panel
+            feedbackPanel = uipanel(obj.MainGrid, ...
+                "Title", "Submit Feedback");
+            % feedbackPanel.Layout.Row = 3;
+            % feedbackPanel.Layout.Column = 1;
+            feedbackGrid = uigridlayout(feedbackPanel, [1, 1]);
+            uibutton(feedbackGrid, "Text", "Send us your feedback", ...
+                "ButtonPushedFcn", @obj.onFeedbackButtonPushed);
+
             % Imported data panel
-            importedPanel = uipanel(obj.MainGrid, ...
-                "Title", "Data Preview (First 20 rows)");
-            importedPanel.Layout.Row = [1, 2];
-            importedPanel.Layout.Column = 2;
+            importedPanel = uipanel(obj.BaseGrid, ...
+                "Title", "Filtered Data Preview (Maximum of 20 rows)");
+            % importedPanel.Layout.Row = [1, 3];
+            % importedPanel.Layout.Column = 2;
 
             % Imported data grid
             importedGrid = uigridlayout(importedPanel, [1, 1]);
@@ -170,10 +179,19 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         end
 
-        function update(~, ~, ~)
+        function update(obj, ~, ~)
+            % N.B. This method is run whenever a public property is changed
 
-            % This method is run whenever a public property is changed
-            
+            if ~isempty(obj.ShapeData.SeismicData)
+                obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
+                obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
+
+                % Display preview of imported data
+                numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
+                obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
+            end
+
         end
 
     end % methods setup update
@@ -249,7 +267,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
                     % Display preview of imported data
                     obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
+                        timetable2table( obj.ShapeData.FilteredData(1:20, :) );
 
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...
@@ -273,7 +291,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
                     % Display preview of imported data
                     obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:20, :) );
+                        timetable2table( obj.ShapeData.FilteredData(1:20, :) );
 
                     uialert(ancestor(obj, "matlab.ui.Figure"), ...
                         "Files were imported successfully", ...
@@ -314,6 +332,25 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         end
 
+        function onFeedbackButtonPushed(~, ~, ~)
+            formURL = "https://forms.office.com/Pages/ResponsePage.aspx?id=ETrdmUhDaESb3eUHKx3B5sf0ERc1zKtOvOAJPNCpnX9UOEFBNDFXRDYySTQ4SThEUTJIN05KSDBNVS4u";
+            web(formURL, "-browser")
+        end
+
     end % callbacks
+
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct.VarColIdx = [obj.VarColumnIdxSpinners.Value];            
+        end
+
+        function restoreComponentState(obj, stateStruct)
+             
+            for k = 1:length(obj.VarColumnIdxSpinners)
+                obj.VarColumnIdxSpinners(k).Value = stateStruct.VarColIdx(k);
+            end
+
+        end
+    end % return and restore state methods
 
 end % classdef

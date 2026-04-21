@@ -152,4 +152,14 @@ classdef selectMagnitude < shape.SHAPEComponent
 
     end % callbacks
 
+    methods % Used for saving and loading session
+        function stateStruct = returnComponentState(obj)
+            stateStruct = struct.empty(0, 1);
+        end
+
+        function restoreComponentState(obj, stateStruct)
+
+        end
+    end % return and restore state methods
+
 end % classdef
