@@ -3,6 +3,7 @@
 classdef ImportSHAPE < shape.SHAPEComponent
 
     properties (Access = private)
+        BaseGrid matlab.ui.container.GridLayout
         MainGrid matlab.ui.container.GridLayout
         ControlsPanel matlab.ui.container.Panel
         ControlsGrid matlab.ui.container.GridLayout
@@ -45,16 +46,21 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function setup(obj)
 
-            % Main grid
-            obj.MainGrid = uigridlayout(obj, [3, 2], ...
-                "RowHeight", {"fit", "fit", "fit"}, ...
+            % Base grid
+            obj.BaseGrid = uigridlayout(obj, [1, 2], ...
+                "RowHeight", {"1x"}, ...
                 "ColumnWidth", {"fit", "1x"});
+
+            % Main grid
+            obj.MainGrid = uigridlayout(obj.BaseGrid, [3, 1], ...
+                "RowHeight", {"fit", "fit", "fit"}, ...
+                "ColumnWidth", {"fit"});
 
             % Getting started panel
             startPanel = uipanel(obj.MainGrid, ...
                 "Title", "Getting Started");
-            startPanel.Layout.Row = 1;
-            startPanel.Layout.Column = 1;
+            % startPanel.Layout.Row = 1;
+            % startPanel.Layout.Column = 1;
 
             % Getting started grid
             startGrid = uigridlayout(startPanel, [1, 2], ...
@@ -72,8 +78,8 @@ classdef ImportSHAPE < shape.SHAPEComponent
             % Import files panel
             obj.ControlsPanel = uipanel(obj.MainGrid, ...
                 "Title", "Select files to import");
-            obj.ControlsPanel.Layout.Row = 2;
-            obj.ControlsPanel.Layout.Column = 1;
+            % obj.ControlsPanel.Layout.Row = 2;
+            % obj.ControlsPanel.Layout.Column = 1;
 
             obj.ControlsGrid = uigridlayout(obj.ControlsPanel, [12, 3], ...
                 "RowHeight", {"fit", "fit", "fit", "fit", "fit", "fit", ...
@@ -150,17 +156,17 @@ classdef ImportSHAPE < shape.SHAPEComponent
             % Submit feedback panel
             feedbackPanel = uipanel(obj.MainGrid, ...
                 "Title", "Submit Feedback");
-            feedbackPanel.Layout.Row = 3;
-            feedbackPanel.Layout.Column = 1;
+            % feedbackPanel.Layout.Row = 3;
+            % feedbackPanel.Layout.Column = 1;
             feedbackGrid = uigridlayout(feedbackPanel, [1, 1]);
             uibutton(feedbackGrid, "Text", "Send us your feedback", ...
-                "ButtonPushedFcn", @obj.onFeedbackButtonPushed)
+                "ButtonPushedFcn", @obj.onFeedbackButtonPushed);
 
             % Imported data panel
-            importedPanel = uipanel(obj.MainGrid, ...
+            importedPanel = uipanel(obj.BaseGrid, ...
                 "Title", "Filtered Data Preview (Maximum of 20 rows)");
-            importedPanel.Layout.Row = [1, 3];
-            importedPanel.Layout.Column = 2;
+            % importedPanel.Layout.Row = [1, 3];
+            % importedPanel.Layout.Column = 2;
 
             % Imported data grid
             importedGrid = uigridlayout(importedPanel, [1, 1]);
