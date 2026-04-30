@@ -44,7 +44,7 @@ The SHAppE app requires the following products:
 
 ## Installation and Usage
 
-- **Installation**: Install the SHAppE app directly in MATLAB via the add-ons explorer
+- **Installation**: Install the SHAppE app directly in MATLAB via the [Add-Ons panel](https://mathworks.com/help/matlab/matlab_env/get-add-ons.html)
 - **Getting started**: Follow the provided [Getting Started Guide](tbx/doc/GettingStartedWithSHAppE.mlx) for instructions on how to use the SHAppE app.
 
 ## Third-Party Content
