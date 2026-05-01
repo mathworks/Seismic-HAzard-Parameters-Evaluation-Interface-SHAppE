@@ -23,7 +23,7 @@ function checkSHAPEFunctions
 
 try
     % Request location of installed additional software
-    installedLocation = SHAppE.getInstallationLocation("SHAPE toolbox");
+    installedLocation = SHAppE.getInstallationLocation("SHAPEtoolbox");
 
     % Add this to MATLAB path
     addpath( genpath(installedLocation) )
