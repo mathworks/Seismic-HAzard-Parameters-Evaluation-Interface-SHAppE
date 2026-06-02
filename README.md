@@ -1,5 +1,7 @@
 # SHAppE: Seismic HAzard Parameters Evaluation App
 
+[![View Standard-Climate-Colormaps-for-MATLAB on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/180879-shappe-seismic-hazard-parameters-evaluation-interface?s_tid=srchtitle)
+
 SHAppE is an intuitive interface for time-dependent seismic hazard evaluation, designed to support both researchers and practitioners in natural and anthropogenic seismology.
 
 SHAppE is an interactive MATLAB&reg; app designed for time-dependent seismic hazard analysis. It extends the capabilities of the existing SHAPE toolbox ([Leptokaropoulos and Lasocki, 2020](https://doi.org/10.1785/0220190319)), improving usability through an intuitive graphical interface. SHAppE allows users to explore datasets interactively and evaluate probabilistic changes in seismic hazard parameters, such as mean return periods (MRP) and exceedance probabilities (EP), along with their confidence intervals. SHAppE also produces output figures and reports. Each report documents the specific combination of methods, selected data, and parameter values used in the analysis. This ensures better traceability and simplifies reproducibility for future studies.
