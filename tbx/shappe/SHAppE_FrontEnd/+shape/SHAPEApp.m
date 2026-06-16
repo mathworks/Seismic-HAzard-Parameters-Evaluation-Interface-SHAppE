@@ -54,10 +54,18 @@ classdef SHAPEApp < handle
 
             obj.ShapeData = shapeData;
 
-            % Build structure
+            % Calculate figure position in px
             figSz = 0.75; % percentage of screen size
-            obj.Figure = uifigure("Units", "normalized", ...
-                "Position", [(1-figSz)/2, (1-figSz)/2, figSz, figSz], ...
+            mde = matlab.ui.container.internal.RootApp.getInstance();
+            wholeSize = mde.WindowBounds(3:4);
+            x = wholeSize(1) * (1-figSz)/2;
+            y = wholeSize(2) * (1-figSz)/2;
+            xw = wholeSize(1) * figSz;
+            yw = wholeSize(2) * figSz;
+
+            % Create uifigure
+            obj.Figure = uifigure("Units", "pixels", ...
+                "Position", [x, y, xw, yw], ...
                 "AutoResizeChildren", "off", ...
                 "Name", "SHAppE: Seismic HAzard Parameters Evaluation Interface");
 

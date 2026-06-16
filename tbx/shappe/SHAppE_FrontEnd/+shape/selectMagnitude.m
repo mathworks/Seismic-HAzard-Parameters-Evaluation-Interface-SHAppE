@@ -148,6 +148,9 @@ classdef selectMagnitude < shape.SHAPEComponent
             % Run filters changed callback
             obj.onFiltersChanged()
 
+            % Run update (things get enabled when data is present)
+            obj.update()
+
         end
 
         function onFiltersChanged(obj, ~, ~)
@@ -171,17 +174,14 @@ classdef selectMagnitude < shape.SHAPEComponent
                     % Set up spinner and xline
                     obj.MagLimitSpinner.Limits = [min(allMagnitudeData), max(allMagnitudeData)];
                     obj.MagLimitSpinner.Value = obj.ShapeData.selectedMagnitudeMinimum;
-                    obj.onSpinnerChanged()
+                    obj.onSpinnerChanged()                    
 
                 end
 
             end
 
         end
-
-        function onAnalysisComplete(obj, ~, ~)
-
-        end
+        
     end
 
 end % classdef

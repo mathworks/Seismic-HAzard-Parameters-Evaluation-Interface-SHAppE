@@ -255,6 +255,9 @@ classdef ProcessData < shape.SHAPEComponent
                 obj.TargetMagnitudeSpinner.Value = obj.ShapeData.TargetMagnitude;
                 obj.BootStrapItrSpinner.Value = obj.ShapeData.NumBootStapItr;
 
+                % Run update (things get enabled when data is present)
+                obj.update()
+
             end
 
         end
@@ -262,10 +265,7 @@ classdef ProcessData < shape.SHAPEComponent
         function onFiltersChanged(obj, ~, ~)
 
         end
-
-        function onAnalysisComplete(obj, ~, ~)
-
-        end
+        
     end
 
 end % classdef

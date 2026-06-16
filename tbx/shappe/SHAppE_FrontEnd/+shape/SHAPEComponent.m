@@ -9,7 +9,6 @@ classdef (Abstract) SHAPEComponent < matlab.ui.componentcontainer.ComponentConta
         SeismicDataListener (:, 1) event.listener {mustBeScalarOrEmpty}
         ProductionDataListener (:, 1) event.listener {mustBeScalarOrEmpty}
         SHAPEFiltersChanged (:, 1) event.listener {mustBeScalarOrEmpty}
-        DataAnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
     end
 
     methods
@@ -34,8 +33,6 @@ classdef (Abstract) SHAPEComponent < matlab.ui.componentcontainer.ComponentConta
                 listener(obj.ShapeData, "ProductionDataImported", @obj.onDataImported);
             obj.SHAPEFiltersChanged = ...
                 listener(obj.ShapeData, "FilterChanged", @obj.onFiltersChanged);
-            obj.DataAnalysisComplete = ...
-                listener(obj.ShapeData, "AnalysisComplete", @obj.onAnalysisComplete);
 
         end
     end

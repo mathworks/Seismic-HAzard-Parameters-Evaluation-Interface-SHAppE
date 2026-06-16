@@ -12,7 +12,7 @@ classdef ViewResults < shape.SHAPEComponent
     end
 
     properties
-        % AnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
+        AnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
         ResultsCleared (:, 1) event.listener {mustBeScalarOrEmpty}
     end
 
@@ -39,9 +39,9 @@ classdef ViewResults < shape.SHAPEComponent
             set(obj, namedArgs)
 
             % Initialise listeners
-            % obj.AnalysisComplete = ...
-            %     listener(obj.ShapeData, ...
-            %     "AnalysisComplete", @obj.onAnalysisComplete);
+            obj.AnalysisComplete = ...
+                listener(obj.ShapeData, ...
+                "AnalysisComplete", @obj.onAnalysisComplete);
 
             obj.ResultsCleared = ...
                 listener(obj.ShapeData, ...

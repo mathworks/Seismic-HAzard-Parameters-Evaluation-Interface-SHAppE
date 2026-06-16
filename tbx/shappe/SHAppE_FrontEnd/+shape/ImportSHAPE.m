@@ -344,6 +344,7 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
     methods % listener callbacks
         function onDataImported(obj, ~, ~)
+
             if ~isempty(obj.ShapeData.SeismicData)
                 obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
                 obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
@@ -352,16 +353,17 @@ classdef ImportSHAPE < shape.SHAPEComponent
                 numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
                 obj.ImportedDisplayTable.Data = ...
                     timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
+
+                % Run update (things get enabled when data is present)
+                obj.update()
+                
             end
         end
 
         function onFiltersChanged(obj, ~, ~)
 
         end
-
-        function onAnalysisComplete(obj, ~, ~)
-
-        end
+        
     end
 
 end % classdef

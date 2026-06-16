@@ -314,6 +314,9 @@ classdef selectTime < shape.SHAPEComponent
             % Run filters changed callback
             obj.onFiltersChanged()
 
+            % Run update (things get enabled when data is present)
+            obj.update()
+
         end
 
         function onFiltersChanged(obj, ~, ~)
@@ -334,10 +337,7 @@ classdef selectTime < shape.SHAPEComponent
             end
 
         end
-
-        function onAnalysisComplete(obj, ~, ~)
-
-        end
+        
     end
 
 end % classdef
