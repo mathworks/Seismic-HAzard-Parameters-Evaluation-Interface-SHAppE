@@ -12,7 +12,7 @@ classdef ViewResults < shape.SHAPEComponent
     end
 
     properties
-        AnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
+        % AnalysisComplete (:, 1) event.listener {mustBeScalarOrEmpty}
         ResultsCleared (:, 1) event.listener {mustBeScalarOrEmpty}
     end
 
@@ -39,9 +39,9 @@ classdef ViewResults < shape.SHAPEComponent
             set(obj, namedArgs)
 
             % Initialise listeners
-            obj.AnalysisComplete = ...
-                listener(obj.ShapeData, ...
-                "AnalysisComplete", @obj.onAnalysisComplete);
+            % obj.AnalysisComplete = ...
+            %     listener(obj.ShapeData, ...
+            %     "AnalysisComplete", @obj.onAnalysisComplete);
 
             obj.ResultsCleared = ...
                 listener(obj.ShapeData, ...
@@ -71,7 +71,7 @@ classdef ViewResults < shape.SHAPEComponent
             % Table View Tab
             obj.TableTab = uitab(obj.TabGroup, "Title", "Table");
             g = uigridlayout(obj.TableTab, [2, 1]);
-            obj.DisplayTable = uitable(g);            
+            obj.DisplayTable = uitable(g);
 
             % Controls grid
             buttonGrid = uigridlayout(obj.MainGrid, [1, 5], "ColumnWidth", repmat("fit", 1, 5));
@@ -84,13 +84,13 @@ classdef ViewResults < shape.SHAPEComponent
 
             % Buttons
             uibutton(buttonGrid, "Text", "Undock Chart", ...
-                "ButtonPushedFcn", @obj.popOutChart);            
+                "ButtonPushedFcn", @obj.popOutChart);
             uibutton(buttonGrid, "Text", "Export to Excel", ...
                 "ButtonPushedFcn", @obj.ExportResultsTable);
             uibutton(buttonGrid, "Text", "Save as .mat", ...
                 "Enable", "off", "Visible", "on");
 
-            
+
 
             % Set up tiled layout and annotations
             obj.InitialiseCharts()
@@ -337,12 +337,12 @@ classdef ViewResults < shape.SHAPEComponent
 
             if chartType == "noOverlap"
 
-                    % Axes settings
-                    xt = unique( sort( obj.ShapeData.ResultsTable.TimeRange(:) ) );
-                    xt.Format = "dd/MM/uu";
-                    set(obj.Axes(:, 1), "xtick", xt)
-                    xticklabels(obj.Axes(:, 1), string(xt))                    
-                    set(obj.Axes(:, 1), "XTickLabelRotation", 45)
+                % Axes settings
+                xt = unique( sort( obj.ShapeData.ResultsTable.TimeRange(:) ) );
+                xt.Format = "dd/MM/uu";
+                set(obj.Axes(:, 1), "xtick", xt)
+                xticklabels(obj.Axes(:, 1), string(xt))
+                set(obj.Axes(:, 1), "XTickLabelRotation", 45)
 
             end % if chartType == "noOverlap"
 
@@ -452,10 +452,10 @@ classdef ViewResults < shape.SHAPEComponent
 
         function ExportDistribution(obj, ~, ~)
 
-            
+
         end
 
-        function ExportResultsTable(obj, ~, ~)            
+        function ExportResultsTable(obj, ~, ~)
 
             % Ask user for fileName
             [FileName, Location] = uiputfile("SeismologyResults.xlsx");
@@ -477,10 +477,10 @@ classdef ViewResults < shape.SHAPEComponent
         end
 
         function popOutChart(obj, ~, ~)
-            
+
             % Create figure
             figPop = figure;
-            
+
             % Copy tiledlayout into new figure, this is a copy, not linked.
             copyobj(obj.TiledLayout, figPop)
 
@@ -531,5 +531,15 @@ classdef ViewResults < shape.SHAPEComponent
             obj.ChangeAxisScale();
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+        end
+    end
 
 end % classdef

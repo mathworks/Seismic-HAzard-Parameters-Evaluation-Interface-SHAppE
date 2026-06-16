@@ -113,18 +113,8 @@ classdef selectEpicentral < shape.SHAPEComponent
 
             if ~isempty(obj.ShapeData.SeismicData)
 
-                % Set up data points
-                colourData = repmat(obj.NotSelectedColour, ...
-                    length(obj.ShapeData.FilteredData.Latitude), 1);
-
-                set(obj.GeoScatter, "LongitudeData", obj.ShapeData.FilteredData.Longitude,...
-                    "LatitudeData", obj.ShapeData.FilteredData.Latitude, "CData", colourData)
                 set([obj.DrawROIButton, ...
                     obj.ClearButton], "Enable", "on")
-
-                % Set chart title
-                obj.GeoAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
-                    "/" + obj.ShapeData.NumSeismicDataPoints;
 
                 if ~isempty(obj.ROI.Position)
                     obj.ApplyButton.Enable = "on";
@@ -301,5 +291,37 @@ classdef selectEpicentral < shape.SHAPEComponent
             obj.onBaseMapDDChanged();
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % Set up data points
+                colourData = repmat(obj.NotSelectedColour, ...
+                    length(obj.ShapeData.FilteredData.Latitude), 1);
+
+                set(obj.GeoScatter, "LongitudeData", obj.ShapeData.FilteredData.Longitude,...
+                    "LatitudeData", obj.ShapeData.FilteredData.Latitude, "CData", colourData)
+
+                % Set chart title
+                obj.GeoAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
+
+            end
+
+        end
+
+        function onAnalysisComplete(obj, ~, ~)
+
+        end
+    end
 
 end % classdef

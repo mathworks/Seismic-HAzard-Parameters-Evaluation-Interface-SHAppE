@@ -181,17 +181,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function update(obj, ~, ~)
             % N.B. This method is run whenever a public property is changed
-
-            if ~isempty(obj.ShapeData.SeismicData)
-                obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
-                obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
-
-                % Display preview of imported data
-                numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
-                obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
-            end
-
         end
 
     end % methods setup update
@@ -341,16 +330,38 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
     methods % Used for saving and loading session
         function stateStruct = returnComponentState(obj)
-            stateStruct.VarColIdx = [obj.VarColumnIdxSpinners.Value];            
+            stateStruct.VarColIdx = [obj.VarColumnIdxSpinners.Value];
         end
 
         function restoreComponentState(obj, stateStruct)
-             
+
             for k = 1:length(obj.VarColumnIdxSpinners)
                 obj.VarColumnIdxSpinners(k).Value = stateStruct.VarColIdx(k);
             end
 
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+            if ~isempty(obj.ShapeData.SeismicData)
+                obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
+                obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
+
+                % Display preview of imported data
+                numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
+                obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
+            end
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+        end
+
+        function onAnalysisComplete(obj, ~, ~)
+
+        end
+    end
 
 end % classdef

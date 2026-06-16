@@ -119,17 +119,6 @@ classdef selectTime < shape.SHAPEComponent
 
             if ~isempty(obj.ShapeData.SeismicData)
 
-                % Extract timestamp variable name
-                timeStampVarName = string( obj.ShapeData.FilteredData.Properties.DimensionNames(1) );
-
-                % Update data shown on chart
-                set(obj.ChartData, "XData", obj.ShapeData.FilteredData.(timeStampVarName),...
-                    "YData", obj.ShapeData.FilteredData.CumEvents)
-
-                % Set chart title
-                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
-                    "/" + obj.ShapeData.NumSeismicDataPoints;
-
                 % Enable controls
                 set([obj.RestoreButton, ...
                     obj.StartDateBound, ...
@@ -318,5 +307,37 @@ classdef selectTime < shape.SHAPEComponent
 
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % Extract timestamp variable name
+                timeStampVarName = string( obj.ShapeData.FilteredData.Properties.DimensionNames(1) );
+
+                % Update data shown on chart
+                set(obj.ChartData, "XData", obj.ShapeData.FilteredData.(timeStampVarName),...
+                    "YData", obj.ShapeData.FilteredData.CumEvents)
+
+                % Set chart title
+                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
+
+            end
+
+        end
+
+        function onAnalysisComplete(obj, ~, ~)
+
+        end
+    end
 
 end % classdef

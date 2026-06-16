@@ -29,13 +29,13 @@ classdef (Abstract) SHAPEComponent < matlab.ui.componentcontainer.ComponentConta
 
             % Initialise listeners
             obj.SeismicDataListener = ...
-                listener(obj.ShapeData, "SeismicDataImported", @obj.update);
+                listener(obj.ShapeData, "SeismicDataImported", @obj.onDataImported);
             obj.ProductionDataListener = ...
-                listener(obj.ShapeData, "ProductionDataImported", @obj.update);
+                listener(obj.ShapeData, "ProductionDataImported", @obj.onDataImported);
             obj.SHAPEFiltersChanged = ...
-                listener(obj.ShapeData, "FilterChanged", @obj.update);
+                listener(obj.ShapeData, "FilterChanged", @obj.onFiltersChanged);
             obj.DataAnalysisComplete = ...
-                listener(obj.ShapeData, "AnalysisComplete", @obj.update);
+                listener(obj.ShapeData, "AnalysisComplete", @obj.onAnalysisComplete);
 
         end
     end

@@ -216,15 +216,8 @@ classdef selectWindows < shape.SHAPEComponent
             if ~isempty(obj.ShapeData.FilteredData)
                 % If there is valid shapeData
 
-                % Add drop down items
-                obj.YAxisDataDropDown.Items = ...
-                    obj.ShapeData.FilteredData.Properties.VariableNames([end, 1:end-1]);
-
-                % Run drop down callback
-                obj.onYAxisDropDownChanged()
-
                 % Update table
-                obj.DisplayTable.Data = obj.SelectedDatesTable;
+                % obj.DisplayTable.Data = obj.SelectedDatesTable;
 
                 % Unhide tabgroup
                 obj.TabGroup.Visible = "on";
@@ -627,5 +620,33 @@ classdef selectWindows < shape.SHAPEComponent
             obj.TabGroup.SelectedTab = ActiveTab;
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Add drop down items
+            obj.YAxisDataDropDown.Items = ...
+                obj.ShapeData.SeismicData.Properties.VariableNames([end, 1:end-1]);
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.FilteredData)
+
+                % Run drop down callback
+                obj.onYAxisDropDownChanged()
+
+            end
+
+        end
+
+        function onAnalysisComplete(obj, ~, ~)
+
+        end
+    end
 
 end % classdef

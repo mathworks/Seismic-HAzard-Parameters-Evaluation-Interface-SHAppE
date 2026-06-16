@@ -86,29 +86,9 @@ classdef selectMagnitude < shape.SHAPEComponent
         end
 
         function update(obj, ~, ~)
-
             % N.B. This method is run whenever a public property is changed
 
             if ~isempty(obj.ShapeData.SeismicData)
-
-                % Set up data
-                allMagnitudeData = obj.ShapeData.SeismicData.Magnitude;
-                filteredMagnitudeData = obj.ShapeData.FilteredData.Magnitude;
-                obj.Histogram.Data = filteredMagnitudeData;
-
-                % Set chart title
-                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
-                    "/" + obj.ShapeData.NumSeismicDataPoints;
-
-                if ~isempty(filteredMagnitudeData)
-                    % Set up histogram edges
-                    obj.Histogram.BinEdges = min(filteredMagnitudeData)-0.05:0.1:max(filteredMagnitudeData)+0.05;
-
-                    % Set up spinner and xline
-                    obj.MagLimitSpinner.Limits = [min(allMagnitudeData), max(allMagnitudeData)];
-                    obj.MagLimitSpinner.Value = obj.ShapeData.selectedMagnitudeMinimum;
-                    obj.onSpinnerChanged()
-                end
 
                 % Enable controls
                 set([obj.ApplyButton, obj.RestoreButton, obj.MagLimitSpinner],...
@@ -161,5 +141,47 @@ classdef selectMagnitude < shape.SHAPEComponent
 
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % Set up data
+                allMagnitudeData = obj.ShapeData.SeismicData.Magnitude;
+                filteredMagnitudeData = obj.ShapeData.FilteredData.Magnitude;
+                obj.Histogram.Data = filteredMagnitudeData;
+
+                % Set chart title
+                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
+
+                if ~isempty(filteredMagnitudeData)
+
+                    % Set up histogram edges
+                    obj.Histogram.BinEdges = min(filteredMagnitudeData)-0.05:0.1:max(filteredMagnitudeData)+0.05;
+
+                    % Set up spinner and xline
+                    obj.MagLimitSpinner.Limits = [min(allMagnitudeData), max(allMagnitudeData)];
+                    obj.MagLimitSpinner.Value = obj.ShapeData.selectedMagnitudeMinimum;
+                    obj.onSpinnerChanged()
+
+                end
+
+            end
+
+        end
+
+        function onAnalysisComplete(obj, ~, ~)
+
+        end
+    end
 
 end % classdef

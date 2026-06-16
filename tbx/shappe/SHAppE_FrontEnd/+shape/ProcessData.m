@@ -10,7 +10,7 @@ classdef ProcessData < shape.SHAPEComponent
         EstimateMaxMagCheckBox matlab.ui.control.CheckBox
         MaxMagPanel matlab.ui.container.Panel
         MaxMagLabel matlab.ui.control.Label
-        MaxMagSpinner matlab.ui.control.Spinner               
+        MaxMagSpinner matlab.ui.control.Spinner
         NumTrialsLabel matlab.ui.control.Label
         NumTrialsSpinner matlab.ui.control.Spinner
         TargetPeriodLengthSpinner matlab.ui.control.Spinner
@@ -61,7 +61,7 @@ classdef ProcessData < shape.SHAPEComponent
             description = uilabel(obj.MainGrid, "Text", "Select data analysis options");
             description.Layout.Column = [1, 2];
 
-            SubGrid = uigridlayout(obj.MainGrid, [5, 1], ...                
+            SubGrid = uigridlayout(obj.MainGrid, [5, 1], ...
                 "RowHeight", {"fit", "fit", "fit", "fit", "fit"});
 
             % Method
@@ -108,7 +108,7 @@ classdef ProcessData < shape.SHAPEComponent
             obj.TargetMagnitudeSpinner = uispinner(ppGrid, "Step", 0.1, ...
                 "ValueChangedFcn", @obj.onTargetMagChanged, ...
                 "AllowEmpty", "on");
-            
+
             % Confidence Interval Calculation
             cicPanel = uipanel(SubGrid, "Title", "Confidence Interval Calculation");
             cicGrid = uigridlayout(cicPanel, [1, 2], ...
@@ -132,17 +132,6 @@ classdef ProcessData < shape.SHAPEComponent
             % This method is run whenever a public property is changed
 
             if ~isempty(obj.ShapeData.SeismicData)
-                
-                % Set control defaults when you initially load data
-                obj.MethodDropDown.Value = obj.ShapeData.Method;
-                obj.TruncatedCheckBox.Value = obj.ShapeData.Truncated;
-                obj.EstimateMaxMagCheckBox.Value = obj.ShapeData.EstimateMMax;
-                obj.MaxMagSpinner.Value = obj.ShapeData.M_Max;
-                obj.NumTrialsSpinner.Value = obj.ShapeData.NumTrials;
-                obj.TargetPeriodLengthSpinner.Value = obj.ShapeData.TargetPeriodLength;
-                obj.TimeUnitDropDown.Value = obj.ShapeData.SelectedTimeUnit;
-                obj.TargetMagnitudeSpinner.Value = obj.ShapeData.TargetMagnitude;
-                obj.BootStrapItrSpinner.Value = obj.ShapeData.NumBootStapItr;
 
                 % Turn on run analysis button
                 obj.RunAnalysisButton.Enable = "on";
@@ -231,7 +220,7 @@ classdef ProcessData < shape.SHAPEComponent
                 obj.ShapeData.runAnalysis();
             catch M
                 uialert(obj.Parent.Parent.Parent, ...
-                    M.message, "Analysis Failed")                
+                    M.message, "Analysis Failed")
             end
 
             close(d)
@@ -249,5 +238,34 @@ classdef ProcessData < shape.SHAPEComponent
 
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % Set control defaults when you initially load data
+                obj.MethodDropDown.Value = obj.ShapeData.Method;
+                obj.TruncatedCheckBox.Value = obj.ShapeData.Truncated;
+                obj.EstimateMaxMagCheckBox.Value = obj.ShapeData.EstimateMMax;
+                obj.MaxMagSpinner.Value = obj.ShapeData.M_Max;
+                obj.NumTrialsSpinner.Value = obj.ShapeData.NumTrials;
+                obj.TargetPeriodLengthSpinner.Value = obj.ShapeData.TargetPeriodLength;
+                obj.TimeUnitDropDown.Value = obj.ShapeData.SelectedTimeUnit;
+                obj.TargetMagnitudeSpinner.Value = obj.ShapeData.TargetMagnitude;
+                obj.BootStrapItrSpinner.Value = obj.ShapeData.NumBootStapItr;
+
+            end
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+        end
+
+        function onAnalysisComplete(obj, ~, ~)
+
+        end
+    end
 
 end % classdef
