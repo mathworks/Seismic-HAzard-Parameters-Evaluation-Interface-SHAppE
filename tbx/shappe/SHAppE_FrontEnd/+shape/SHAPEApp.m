@@ -1,12 +1,15 @@
 classdef SHAPEApp < handle
 
-    properties (GetAccess = protected)
+    properties
         ShapeData (:, 1) shape.ShapeData {mustBeScalarOrEmpty}
     end
 
     % Structure
-    properties (Access = protected)
+    properties (GetAccess = public, SetAccess = private)
         Figure matlab.ui.Figure
+    end
+
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private)
         MainTabGroup matlab.ui.container.TabGroup
         ImportTab matlab.ui.container.Tab
         FilterTab matlab.ui.container.Tab
@@ -24,7 +27,7 @@ classdef SHAPEApp < handle
     end
 
     % Components
-    properties (Access = protected)
+    properties (GetAccess = {?matlab.unittest.TestCase, ?SHappE_App}, SetAccess = protected)
         ImportDataComponent shape.ImportSHAPE
         SelectMagnitudeComponent shape.selectMagnitude
         SelectEpicentalComponent shape.selectEpicentral

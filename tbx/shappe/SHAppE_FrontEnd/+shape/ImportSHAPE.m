@@ -2,7 +2,7 @@
 
 classdef ImportSHAPE < shape.SHAPEComponent
 
-    properties (Access = private)
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private)
         BaseGrid matlab.ui.container.GridLayout
         MainGrid matlab.ui.container.GridLayout
         ControlsPanel matlab.ui.container.Panel
@@ -220,20 +220,18 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function onBrowseButtonPressed(obj, source, ~)
 
-            [file, path] = uigetfile(["*.xlsx"; "*.csv"]);
+            [fileName, filePath] = uigetfile(["*.xlsx"; "*.csv"]);
 
             % Refocus figure
             focus(ancestor(obj, "figure"))
 
             % If a file is selected
-            if file ~= 0
+            if fileName ~= 0
 
                 % Write file name property based on button pressed
                 idx = source.UserData;
-                obj.FileNames(idx) = fullfile(path, file);
 
-                % Display selected file name
-                obj.FileNameDisplays(idx).Value = file;
+                obj.updateFileNames(idx, filePath, fileName)
 
             end % if file ~= 0
 
@@ -364,6 +362,18 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         end
         
+    end
+
+    methods (Access = ?matlab.unittest.TestCase)
+        function updateFileNames(obj, idx, filePath, fileName)
+
+            % Set filename property
+            obj.FileNames(idx) = fullfile(filePath, fileName);
+
+            % Display selected file name
+            obj.FileNameDisplays(idx).Value = fileName;
+
+        end
     end
 
 end % classdef

@@ -2,7 +2,7 @@
 
 classdef selectDepthRange < shape.SHAPEComponent
 
-    properties  (Access=private) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         HistAxes matlab.graphics.axis.Axes
         ScatterAxes matlab.graphics.axis.Axes

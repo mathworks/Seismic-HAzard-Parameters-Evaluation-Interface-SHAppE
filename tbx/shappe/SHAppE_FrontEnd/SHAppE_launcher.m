@@ -1,4 +1,4 @@
-function SHAppE_launcher
+function app = SHAppE_launcher
 
 % Check for IP and Stats toolboxes
 if checkToolboxes
@@ -9,10 +9,11 @@ if checkToolboxes
 
     % Create instance of model and launch app
     shapeData = shape.ShapeData;
-    shape.SHAPEApp(shapeData);
+    app = shape.SHAPEApp(shapeData);
 
 else
 
+    app = [];
     warning("SHAppE cannot launch. Required MATLAB toolboxes (Image Processing Toolbox, Statistics and Machine Learning Toolbox) are not installed.")
 
 end

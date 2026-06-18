@@ -2,7 +2,7 @@
 
 classdef selectMagnitude < shape.SHAPEComponent
 
-    properties (Access=public) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         Axes matlab.graphics.axis.Axes
         Histogram matlab.graphics.chart.primitive.Histogram
