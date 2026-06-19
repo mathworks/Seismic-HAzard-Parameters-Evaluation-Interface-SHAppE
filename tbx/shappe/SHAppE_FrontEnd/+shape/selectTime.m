@@ -2,7 +2,7 @@
 
 classdef selectTime < shape.SHAPEComponent
 
-    properties (Access=private) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         Axes matlab.graphics.axis.Axes
         ChartData matlab.graphics.chart.primitive.Line

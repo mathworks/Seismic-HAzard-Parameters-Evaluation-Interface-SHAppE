@@ -2,7 +2,7 @@
 
 classdef selectEpicentral < shape.SHAPEComponent
 
-    properties (Access=private) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         GeoAxes matlab.graphics.axis.GeographicAxes
         GeoScatter matlab.graphics.chart.primitive.Scatter
@@ -190,6 +190,31 @@ classdef selectEpicentral < shape.SHAPEComponent
 
     end % Poly methods
 
+    methods (Access = ?matlab.unittest.TestCase)
+
+        function DrawPolyForTest(obj, roiPoints)
+
+            % Reset Polygon
+            obj.onPolyMoved
+
+            % Reset epi table
+            obj.epiPointsTable.Data = [];
+
+            % Reset colours
+            obj.GeoScatter.CData = obj.NotSelectedColour;
+
+            % Set ROI position            
+            obj.ROI.Position = roiPoints;
+
+            % Update epi table
+            obj.epiPointsTable.Data = obj.ROI.Position;
+
+            obj.ApplyButton.Enable = "on";
+
+        end
+
+    end
+
     methods % callbacks
 
         function onBaseMapDDChanged(obj, ~, ~)
@@ -321,7 +346,7 @@ classdef selectEpicentral < shape.SHAPEComponent
             end
 
         end
-        
+
     end
 
 end % classdef

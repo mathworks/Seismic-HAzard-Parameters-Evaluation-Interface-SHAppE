@@ -124,11 +124,60 @@ classdef SHAPEAppTest < matlab.uitest.TestCase
         end
 
         function testEpicentralFilter(testCase)
+            % Create fixture for app with data
+            importFixture = testCase.applyFixture(ImportDataFixture);
+            testCase.AppWithData = importFixture.App;
 
+            % Choose the filter tab & depth tab
+            testCase.choose(testCase.AppWithData.FilterTab)
+            testCase.choose(testCase.AppWithData.EpicentralTab)
+
+            % Extract select magnitude component
+            epiComp = testCase.AppWithData.SelectEpicentalComponent;
+
+            % Set roi points using method included for testing as cannot
+            % test interactively
+            roiPoints = [15.3951 108.0655
+                15.3073	108.0672
+                15.3016	108.1814
+                15.3883	108.1838];
+            epiComp.DrawPolyForTest(roiPoints)
+
+            % Apply
+            testCase.press(epiComp.ApplyButton)
+
+            % Check
+            roiP = [testCase.AppWithData.FilterOptionsTable.Data.Value{2}];
+            verifyEqual(testCase, roiP, roiPoints, "abstol", 1e-6)
         end
 
         function testTimeFilter(testCase)
+            % Create fixture for app with data
+            importFixture = testCase.applyFixture(ImportDataFixture);
+            testCase.AppWithData = importFixture.App;
 
+            % Choose the filter tab & depth tab
+            testCase.choose(testCase.AppWithData.FilterTab)
+            testCase.choose(testCase.AppWithData.TimeCropTab)
+
+            % Extract select magnitude component
+            timeComp = testCase.AppWithData.SelectTimeComponent;
+
+            % Select time range interactively
+            timeRange = [datetime(2014, 1, 1), datetime(2016, 1, 1)];
+            timeRangeNum = ruler2num(timeRange, timeComp.Axes.XAxis);
+            testCase.hover(timeComp.Axes, [timeRangeNum(1), 3000])
+            testCase.press(timeComp.Axes, [timeRangeNum(1), 3000])
+            testCase.hover(timeComp.Axes, [timeRangeNum(2), 3000])
+            testCase.press(timeComp.Axes, [timeRangeNum(2), 3000])
+
+            % Apply
+            testCase.press(timeComp.ApplyButton)
+
+            % Check
+            timeRng = [testCase.AppWithData.FilterOptionsTable.Data.Value{5:6}];
+            testCase.verifyLessThanOrEqual( ...
+                abs(timeRng - timeRange), days(3)); % I believe some error is introduced when using ruler2num hence this option
         end
     end % methods filtering
         
