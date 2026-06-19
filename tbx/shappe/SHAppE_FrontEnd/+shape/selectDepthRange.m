@@ -2,7 +2,7 @@
 
 classdef selectDepthRange < shape.SHAPEComponent
 
-    properties  (Access=private) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         HistAxes matlab.graphics.axis.Axes
         ScatterAxes matlab.graphics.axis.Axes
@@ -113,32 +113,6 @@ classdef selectDepthRange < shape.SHAPEComponent
 
             if ~isempty(obj.ShapeData.SeismicData)
 
-                depthBounds = obj.ShapeData.selectedDepthRange;
-
-                % set Spinners
-                obj.MinDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;
-                obj.MaxDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;
-                obj.MinDepthSpinner.Value = depthBounds(1);
-                obj.MaxDepthSpinner.Value = depthBounds(2);
-
-                % set Histogram
-                obj.Histogram.Data = obj.ShapeData.FilteredData.Depth;
-                obj.Histogram.NumBins = obj.BinsSpinner.Value;
-
-                % Set chart title
-                obj.HistAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
-                    "/" + obj.ShapeData.NumSeismicDataPoints;
-
-                % set Scatter plot
-                set(obj.Scatter, "XData", 1:height(obj.ShapeData.FilteredData),...
-                    "YData", obj.ShapeData.FilteredData.Depth)
-
-                % set X and Y lines
-                obj.MinHistLine.Value = depthBounds(1);
-                obj.MaxHistLine.Value = depthBounds(2);
-                obj.MinScatterLine.Value = depthBounds(1);
-                obj.MaxScatterLine.Value = depthBounds(2);
-
                 % Enable controls
                 set([obj.BinsSpinner, ...
                     obj.MaxDepthSpinner, ...
@@ -231,5 +205,50 @@ classdef selectDepthRange < shape.SHAPEComponent
             obj.onBinsSpinnerPressed();
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+            % Run update (things get enabled when data is present)
+            obj.update()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % set Spinners
+                obj.MinDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;
+                obj.MaxDepthSpinner.Limits = obj.ShapeData.TotalDepthRange;
+                depthBounds = obj.ShapeData.selectedDepthRange;
+                obj.MinDepthSpinner.Value = depthBounds(1);
+                obj.MaxDepthSpinner.Value = depthBounds(2);
+
+                % set Histogram data
+                obj.Histogram.Data = obj.ShapeData.FilteredData.Depth;
+                obj.Histogram.NumBins = obj.BinsSpinner.Value;
+
+                % Set chart title
+                obj.HistAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
+
+                % set Scatter plot
+                set(obj.Scatter, "XData", 1:height(obj.ShapeData.FilteredData),...
+                    "YData", obj.ShapeData.FilteredData.Depth)
+
+                % set X and Y lines
+                obj.MinHistLine.Value = depthBounds(1);
+                obj.MaxHistLine.Value = depthBounds(2);
+                obj.MinScatterLine.Value = depthBounds(1);
+                obj.MaxScatterLine.Value = depthBounds(2);
+
+            end
+        end
+        
+    end
 
 end % classdef

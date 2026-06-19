@@ -2,7 +2,7 @@
 
 classdef ImportSHAPE < shape.SHAPEComponent
 
-    properties (Access = private)
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private)
         BaseGrid matlab.ui.container.GridLayout
         MainGrid matlab.ui.container.GridLayout
         ControlsPanel matlab.ui.container.Panel
@@ -181,17 +181,6 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function update(obj, ~, ~)
             % N.B. This method is run whenever a public property is changed
-
-            if ~isempty(obj.ShapeData.SeismicData)
-                obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
-                obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
-
-                % Display preview of imported data
-                numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
-                obj.ImportedDisplayTable.Data = ...
-                    timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
-            end
-
         end
 
     end % methods setup update
@@ -231,20 +220,18 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
         function onBrowseButtonPressed(obj, source, ~)
 
-            [file, path] = uigetfile(["*.xlsx"; "*.csv"]);
+            [fileName, filePath] = uigetfile(["*.xlsx"; "*.csv"]);
 
             % Refocus figure
             focus(ancestor(obj, "figure"))
 
             % If a file is selected
-            if file ~= 0
+            if fileName ~= 0
 
                 % Write file name property based on button pressed
                 idx = source.UserData;
-                obj.FileNames(idx) = fullfile(path, file);
 
-                % Display selected file name
-                obj.FileNameDisplays(idx).Value = file;
+                obj.updateFileNames(idx, filePath, fileName)
 
             end % if file ~= 0
 
@@ -341,16 +328,52 @@ classdef ImportSHAPE < shape.SHAPEComponent
 
     methods % Used for saving and loading session
         function stateStruct = returnComponentState(obj)
-            stateStruct.VarColIdx = [obj.VarColumnIdxSpinners.Value];            
+            stateStruct.VarColIdx = [obj.VarColumnIdxSpinners.Value];
         end
 
         function restoreComponentState(obj, stateStruct)
-             
+
             for k = 1:length(obj.VarColumnIdxSpinners)
                 obj.VarColumnIdxSpinners(k).Value = stateStruct.VarColIdx(k);
             end
 
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+                obj.FileNameDisplays(1).Value = obj.ShapeData.SeismicDataFileName;
+                obj.FileNameDisplays(2).Value = obj.ShapeData.ProductionDataFileName;
+
+                % Display preview of imported data
+                numRows = min(20, height(obj.ShapeData.FilteredData)); % In case there are fewer than 20 rows
+                obj.ImportedDisplayTable.Data = ...
+                    timetable2table( obj.ShapeData.FilteredData(1:numRows, :) );
+
+                % Run update (things get enabled when data is present)
+                obj.update()
+                
+            end
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+        end
+        
+    end
+
+    methods (Access = ?matlab.unittest.TestCase)
+        function updateFileNames(obj, idx, filePath, fileName)
+
+            % Set filename property
+            obj.FileNames(idx) = fullfile(filePath, fileName);
+
+            % Display selected file name
+            obj.FileNameDisplays(idx).Value = fileName;
+
+        end
+    end
 
 end % classdef

@@ -2,7 +2,7 @@
 
 classdef selectTime < shape.SHAPEComponent
 
-    properties (Access=private) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         Axes matlab.graphics.axis.Axes
         ChartData matlab.graphics.chart.primitive.Line
@@ -118,17 +118,6 @@ classdef selectTime < shape.SHAPEComponent
             % This runs whenever a filter is changed
 
             if ~isempty(obj.ShapeData.SeismicData)
-
-                % Extract timestamp variable name
-                timeStampVarName = string( obj.ShapeData.FilteredData.Properties.DimensionNames(1) );
-
-                % Update data shown on chart
-                set(obj.ChartData, "XData", obj.ShapeData.FilteredData.(timeStampVarName),...
-                    "YData", obj.ShapeData.FilteredData.CumEvents)
-
-                % Set chart title
-                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
-                    "/" + obj.ShapeData.NumSeismicDataPoints;
 
                 % Enable controls
                 set([obj.RestoreButton, ...
@@ -318,5 +307,37 @@ classdef selectTime < shape.SHAPEComponent
 
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+            % Run update (things get enabled when data is present)
+            obj.update()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % Extract timestamp variable name
+                timeStampVarName = string( obj.ShapeData.FilteredData.Properties.DimensionNames(1) );
+
+                % Update data shown on chart
+                set(obj.ChartData, "XData", obj.ShapeData.FilteredData.(timeStampVarName),...
+                    "YData", obj.ShapeData.FilteredData.CumEvents)
+
+                % Set chart title
+                obj.Axes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
+
+            end
+
+        end
+        
+    end
 
 end % classdef

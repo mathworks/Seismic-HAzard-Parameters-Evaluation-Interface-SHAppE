@@ -2,7 +2,7 @@
 
 classdef selectEpicentral < shape.SHAPEComponent
 
-    properties (Access=private) % Graphics
+    properties (GetAccess = ?matlab.unittest.TestCase, SetAccess = private) % Graphics
         MainGrid matlab.ui.container.GridLayout
         GeoAxes matlab.graphics.axis.GeographicAxes
         GeoScatter matlab.graphics.chart.primitive.Scatter
@@ -113,18 +113,8 @@ classdef selectEpicentral < shape.SHAPEComponent
 
             if ~isempty(obj.ShapeData.SeismicData)
 
-                % Set up data points
-                colourData = repmat(obj.NotSelectedColour, ...
-                    length(obj.ShapeData.FilteredData.Latitude), 1);
-
-                set(obj.GeoScatter, "LongitudeData", obj.ShapeData.FilteredData.Longitude,...
-                    "LatitudeData", obj.ShapeData.FilteredData.Latitude, "CData", colourData)
                 set([obj.DrawROIButton, ...
                     obj.ClearButton], "Enable", "on")
-
-                % Set chart title
-                obj.GeoAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
-                    "/" + obj.ShapeData.NumSeismicDataPoints;
 
                 if ~isempty(obj.ROI.Position)
                     obj.ApplyButton.Enable = "on";
@@ -199,6 +189,31 @@ classdef selectEpicentral < shape.SHAPEComponent
         end % DrawPoly
 
     end % Poly methods
+
+    methods (Access = ?matlab.unittest.TestCase)
+
+        function DrawPolyForTest(obj, roiPoints)
+
+            % Reset Polygon
+            obj.onPolyMoved
+
+            % Reset epi table
+            obj.epiPointsTable.Data = [];
+
+            % Reset colours
+            obj.GeoScatter.CData = obj.NotSelectedColour;
+
+            % Set ROI position            
+            obj.ROI.Position = roiPoints;
+
+            % Update epi table
+            obj.epiPointsTable.Data = obj.ROI.Position;
+
+            obj.ApplyButton.Enable = "on";
+
+        end
+
+    end
 
     methods % callbacks
 
@@ -301,5 +316,37 @@ classdef selectEpicentral < shape.SHAPEComponent
             obj.onBaseMapDDChanged();
         end
     end % return and restore state methods
+
+    methods % listener callbacks
+        function onDataImported(obj, ~, ~)
+
+            % Run filters changed callback
+            obj.onFiltersChanged()
+
+            % Run update (things get enabled when data is present)
+            obj.update()
+
+        end
+
+        function onFiltersChanged(obj, ~, ~)
+
+            if ~isempty(obj.ShapeData.SeismicData)
+
+                % Set up data points
+                colourData = repmat(obj.NotSelectedColour, ...
+                    length(obj.ShapeData.FilteredData.Latitude), 1);
+
+                set(obj.GeoScatter, "LongitudeData", obj.ShapeData.FilteredData.Longitude,...
+                    "LatitudeData", obj.ShapeData.FilteredData.Latitude, "CData", colourData)
+
+                % Set chart title
+                obj.GeoAxes.Title.String = "Events: " + obj.ShapeData.NumFilteredDataPoints + ...
+                    "/" + obj.ShapeData.NumSeismicDataPoints;
+
+            end
+
+        end
+
+    end
 
 end % classdef
