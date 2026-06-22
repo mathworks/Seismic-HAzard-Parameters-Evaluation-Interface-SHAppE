@@ -58,19 +58,19 @@ classdef SHAPEApp < handle
             obj.ShapeData = shapeData;
 
             % Calculate figure position in px
-            figSz = 0.75; % percentage of screen size
+            figSz = 0.65; % percentage of screen size
             mde = matlab.ui.container.internal.RootApp.getInstance();
             wholeSize = mde.WindowBounds(3:4);
-            x = wholeSize(1) * (1-figSz)/2;
-            y = wholeSize(2) * (1-figSz)/2;
-            xw = wholeSize(1) * figSz;
-            yw = wholeSize(2) * figSz;
+            w = wholeSize(1) * figSz;
+            h = wholeSize(2) * figSz;
 
             % Create uifigure
             obj.Figure = uifigure("Units", "pixels", ...
-                "Position", [x, y, xw, yw], ...
+                "Position", [0, 0, w, h], ...
                 "AutoResizeChildren", "off", ...
-                "Name", "SHAppE: Seismic HAzard Parameters Evaluation Interface");
+                "Name", "SHAppE: Seismic HAzard Parameters Evaluation Interface", ...
+                "Visible", "off");
+            movegui(obj.Figure, "center")
 
             % Add menu bar
             fileMenu = uimenu(obj.Figure, "Text", "File");
@@ -130,8 +130,7 @@ classdef SHAPEApp < handle
             obj.EpicentralTab = uitab(obj.FilterTabGroup,"Title","Epicentral");
             obj.DepthTab = uitab(obj.FilterTabGroup,"Title","Depth");
             obj.TimeCropTab = uitab(obj.FilterTabGroup,"Title","Time");
-
-
+            
             % Create each component
 
             % Importing
@@ -162,6 +161,9 @@ classdef SHAPEApp < handle
                 listener(obj.ShapeData, "WindowsSet", @obj.onWindowsSet);
             obj.AnalysisComplete = ...
                 listener(obj.ShapeData, "AnalysisComplete", @obj.onAnalysisComplete);
+
+            % Make figure visible
+            obj.Figure.Visible = "on";
 
         end % Constructor method
 
